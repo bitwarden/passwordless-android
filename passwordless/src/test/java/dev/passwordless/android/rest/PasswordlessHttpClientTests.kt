@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dev.passwordless.android.rest.contracts.*
 import dev.passwordless.android.rest.converters.Base64UrlConverter
+import dev.passwordless.android.rest.exceptions.PasswordlessApiException
 import dev.passwordless.android.rest.serializers.Base64UrlDeserializer
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
