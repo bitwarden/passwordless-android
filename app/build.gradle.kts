@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.myapplication"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.myapplication"
         minSdk = 28
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -44,8 +44,6 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation(project(mapOf("path" to ":passwordless")))
-    implementation(project(mapOf("path" to ":passwordless")))
     implementation(project(mapOf("path" to ":passwordless")))
     implementation("com.google.android.gms:play-services-fido:20.1.0")
     testImplementation("junit:junit:4.13.2")
