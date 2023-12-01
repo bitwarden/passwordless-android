@@ -12,6 +12,8 @@ import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialCreationO
 import dev.passwordless.android.rest.PasswordlessOptions
 import dev.passwordless.android.rest.PasswordlessHttpClient
 import dev.passwordless.android.rest.PasswordlessHttpClientFactory
+import dev.passwordless.android.rest.contracts.AuthenticatorAttestationRawResponse
+import dev.passwordless.android.rest.contracts.RegisterBeginRequest
 import dev.passwordless.android.rest.contracts.RegisterBeginResponse
 import dev.passwordless.android.rest.contracts.RegisterCompleteRequest
 import dev.passwordless.android.rest.exceptions.PasswordlessApiException
@@ -40,9 +42,15 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
         // 2. Call /register/begin
         // 3. Create token
 
+        val beginInputModel = RegisterBeginRequest(
+            token = token,
+            rpId = _options.rpId,
+            origin = _options.origin
+        )
+
         _fido2ApiClient?.let { client ->
             try {
-                val beginResponse = _httpClient.registerBegin(inputModel)
+                val beginResponse = _httpClient.registerBegin(beginInputModel)
                 if (!beginResponse.isSuccessful) {
                     val problemDetails = ProblemDetails("", beginResponse.message(), beginResponse.code(), "")
                     throw PasswordlessApiException(problemDetails)
@@ -55,7 +63,7 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
                     .setTimeoutSeconds(beginResult.data.timeout.toDouble())
                     .build()
                 val creationIntent = _fido2ApiClient.getRegisterPendingIntent(credentialCreationOptions)
-                
+
                 val createdCredential = creationIntent.await()
             } catch (e: Exception) {
                 Log.e("passwordless-register-begin", "Cannot call registerRequest", e)
@@ -67,7 +75,7 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
     /**
      * @param activityResult
      */
-    fun handleRegistration(activityResult: ActivityResult) {
+    suspend fun handleRegistration(activityResult: ActivityResult) {
         val bytes = activityResult.data?.getByteArrayExtra(Fido.FIDO2_KEY_CREDENTIAL_EXTRA)
         when {
             (activityResult.resultCode != Activity.RESULT_OK || bytes == null) ->

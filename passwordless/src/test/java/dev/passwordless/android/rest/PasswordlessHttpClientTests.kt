@@ -46,7 +46,11 @@ class PasswordlessHttpClientTests {
     @Test
     fun registerBegin_returns_expectedResult() = runBlocking {
         // arrange
-        val inputModel = RegisterBeginRequest("register_token")
+        val inputModel = RegisterBeginRequest(
+            "register_token",
+            "adminconsole.passwordless.dev",
+            "https://adminconsole.passwordless.dev")
+
         val mockedResponse = MockResponse()
             .setResponseCode(200)
             .setBody("{\n" +
