@@ -1,3 +1,3 @@
 package dev.passwordless.android.rest.exceptions
 
-class PasswordlessApiException(details: ProblemDetails): Exception(details.title)
+class PasswordlessApiException(val details: ProblemDetails): Exception(details.title)
