@@ -1,24 +1,33 @@
-# General
-.DS_Store
-Thumbs.db
+# Gradle files
+.gradle/
+build/
 
-# IDEs and editors
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log/OS Files
+*.log
+
+# Android Studio generated files and folders
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+output.json
+
+# IntelliJ
+*.iml
 .idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
 
-# Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
+# Keystore files
+*.jks
+*.keystore
 
-# Node
-node_modules
-npm-debug.log
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# Android Profiling
+*.hprof
