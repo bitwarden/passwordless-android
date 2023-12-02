@@ -9,6 +9,9 @@ Passwordless.dev consists of three key parts:
     * [Register here](https://admin.passwordless.dev/Account/Login)
 * a private RESTful API used to initiate key registrations, verify signins, and retrieve keys for end-users. This is typically your backend.
 
+## Requirements
+* Android 9+ (API 28)
+
 ## Help
 
 To talk to the passwordless team, send us an email at support@passwordless.dev
