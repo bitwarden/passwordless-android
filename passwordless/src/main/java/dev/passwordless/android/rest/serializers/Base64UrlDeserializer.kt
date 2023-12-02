@@ -7,6 +7,9 @@ import dev.passwordless.android.rest.converters.Base64UrlConverter
 import java.lang.reflect.Type
 import java.util.*
 
+/**
+ * Deserializes a Base64Url string to a ByteArray.
+ */
 class Base64UrlDeserializer : JsonDeserializer<ByteArray> {
     override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): ByteArray {
         if (json == null || json.isJsonNull) {

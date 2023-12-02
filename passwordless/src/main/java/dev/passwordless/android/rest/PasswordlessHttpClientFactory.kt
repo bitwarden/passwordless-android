@@ -9,6 +9,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object PasswordlessHttpClientFactory {
+    /**
+     * Creates a new instance of the PasswordlessHttpClient.
+     *
+     * @param options The PasswordlessOptions.
+     * @return The PasswordlessHttpClient.
+     */
     fun create(options: PasswordlessOptions): PasswordlessHttpClient {
         val gson: Gson = GsonBuilder()
             .registerTypeAdapter(ByteArray::class.java, Base64UrlDeserializer())

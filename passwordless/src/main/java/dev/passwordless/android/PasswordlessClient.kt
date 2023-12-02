@@ -29,12 +29,17 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
 
     // request scoped start
     private var _nickname: String? = null
+    private var _session: String? = null
     // request scoped end
 
     init {
         _httpClient = PasswordlessHttpClientFactory.create(options)
     }
 
+    /**
+     * @param token The registration token obtained from your own back-end, starts with "register_"
+     * @param nickname Friendly nickname for the credential
+     */
     suspend fun register(token: String, nickname: String? = null): PendingIntent? {
         _nickname = nickname
 
@@ -56,6 +61,7 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
                     throw PasswordlessApiException(problemDetails)
                 }
                 val beginResult: RegisterBeginResponse = beginResponse.body()!!
+                _session = beginResult.session
 
                 val credentialCreationOptions = PublicKeyCredentialCreationOptions
                     .Builder()
@@ -73,6 +79,7 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
     }
 
     /**
+     * The callback for the registration activity result
      * @param activityResult
      */
     suspend fun handleRegistration(activityResult: ActivityResult) {
@@ -87,10 +94,10 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
                     throw PasswordlessCredentialCreateException(response.errorMessage)
                 } else {
                     val request = RegisterCompleteRequest(
-                        session = "",
+                        session = _session!!,
                         response = response as AuthenticatorAttestationRawResponse,
                         nickname = _nickname,
-                        origin = "",
+                        origin = _options.origin,
                         rpId = _options.rpId
                     )
                     this._httpClient.registerComplete(request)

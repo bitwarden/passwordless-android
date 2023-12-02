@@ -7,9 +7,18 @@ import dev.passwordless.android.rest.serializers.JsonSerializerImpl
 import okhttp3.Interceptor
 import okhttp3.Response
 
+/**
+ * Intercepts the response and throws a PasswordlessApiException if the response is not successful and the response body is a ProblemDetails object.
+ */
 class ProblemDetailsInterceptor(val _serializer: JsonSerializer) : Interceptor {
     constructor() : this(JsonSerializerImpl())
 
+    /**
+     * Intercepts the response and throws a PasswordlessApiException if the response is not successful and the response body is a ProblemDetails object.
+     * @param chain The interceptor chain.
+     * @return The response.
+     * @throws PasswordlessApiException If the response is not successful and Content-Type header is of type "application/problem+json".
+     **/
     @Throws(PasswordlessApiException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
