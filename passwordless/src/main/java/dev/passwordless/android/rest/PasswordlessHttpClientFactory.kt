@@ -2,6 +2,7 @@ package dev.passwordless.android.rest
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import dev.passwordless.android.rest.interceptors.ApikeyHeaderInterceptor
 import dev.passwordless.android.rest.interceptors.ProblemDetailsInterceptor
 import dev.passwordless.android.rest.serializers.Base64UrlDeserializer
 import okhttp3.OkHttpClient
@@ -15,6 +16,7 @@ object PasswordlessHttpClientFactory {
             .create()
 
         val client = OkHttpClient.Builder()
+            .addInterceptor(ApikeyHeaderInterceptor(options.apiKey))
             .addInterceptor(ProblemDetailsInterceptor())
             .build()
 
