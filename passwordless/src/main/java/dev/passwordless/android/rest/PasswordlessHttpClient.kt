@@ -10,7 +10,7 @@ interface PasswordlessHttpClient {
      * This endpoint is used to begin the registration process.
      */
     @POST("/register/begin")
-    suspend fun registerBegin(@Header("Apikey") publicKey: String,@Body inputModel: RegisterBeginRequest): Response<RegisterBeginResponse>
+    suspend fun registerBegin(@Body inputModel: RegisterBeginRequest): Response<RegisterBeginResponse>
 
     /**
      * This endpoint is used to complete the registration process.
@@ -20,5 +20,5 @@ interface PasswordlessHttpClient {
      * @return RegisterCompleteResponse contains the session token
      */
     @POST("/register/complete")
-    suspend fun registerComplete(@Header("Apikey") publicKey: String,@Body inputModel: RegisterCompleteRequest): Response<RegisterCompleteResponse>
+    suspend fun registerComplete(@Body inputModel: RegisterCompleteRequest): Response<RegisterCompleteResponse>
 }

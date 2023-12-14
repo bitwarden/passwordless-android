@@ -50,7 +50,7 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
 
         _fido2ApiClient?.let { client ->
             try {
-                val beginResponse = _httpClient.registerBegin(_options.apiKey,beginInputModel)
+                val beginResponse = _httpClient.registerBegin(beginInputModel)
                 if (!beginResponse.isSuccessful) {
                     val problemDetails = ProblemDetails("", beginResponse.message(), beginResponse.code(), "")
                     throw PasswordlessApiException(problemDetails)
@@ -93,7 +93,7 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
                         origin = "",
                         rpId = _options.rpId
                     )
-                    this._httpClient.registerComplete(_options.apiKey,request)
+                    this._httpClient.registerComplete(request)
                 }
             }
         }
