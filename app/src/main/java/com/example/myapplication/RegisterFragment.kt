@@ -11,10 +11,13 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.databinding.FragmentRegisterBinding
+import com.example.myapplication.services.yourbackend.YourBackendHttpClientFactory
 import com.google.android.gms.fido.Fido
 import dev.passwordless.android.PasswordlessClient
 import dev.passwordless.android.rest.PasswordlessOptions
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlin.random.Random
 
 class RegisterFragment : Fragment() {
 
@@ -34,7 +37,7 @@ class RegisterFragment : Fragment() {
 
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         val fido2ApiClient = Fido.getFido2ApiClient(this.requireContext().applicationContext)
-        val options = PasswordlessOptions("", "", "", "")
+        val options = PasswordlessOptions("nodejsdemobackend:public:a02aa4cca4ad464cb5acc50dcca33b37", "localhost", "https://demo-backend.passwordless.dev/", "https://v4.passwordless.dev")
 
         _passwordless = PasswordlessClient(fido2ApiClient, options)
 
@@ -60,7 +63,12 @@ class RegisterFragment : Fragment() {
 
         binding.buttonRegister.setOnClickListener {
             // todo
-            _passwordless.register(null, null)
+            lifecycleScope.launch {
+                val httpClient = YourBackendHttpClientFactory.create("https://demo-backend.passwordless.dev/")
+                val responseToken = httpClient.register("Shubham"+ Random.nextDouble()).body()?.token!!
+                _passwordless.register(responseToken)
+            }
+
             //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
     }
