@@ -70,7 +70,7 @@ class PasswordlessHttpClientTests {
         mockWebServer.enqueue(mockedResponse)
 
         // act
-        val actualResponse = apiService.registerBegin("",inputModel)
+        val actualResponse = apiService.registerBegin(inputModel)
 
         val request = mockWebServer.takeRequest()
         assert(actualResponse.isSuccessful)
@@ -114,7 +114,7 @@ class PasswordlessHttpClientTests {
         mockWebServer.enqueue(mockedResponse)
 
         // act
-        val actualResponse = apiService.registerComplete("",inputModel)
+        val actualResponse = apiService.registerComplete(inputModel)
 
         val request = mockWebServer.takeRequest()
         assert(actualResponse.isSuccessful)
