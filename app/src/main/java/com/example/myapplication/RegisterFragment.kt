@@ -17,8 +17,6 @@ import com.google.android.gms.fido.Fido
 import dev.passwordless.android.PasswordlessClient
 import dev.passwordless.android.rest.PasswordlessOptions
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlin.random.Random
 
 class RegisterFragment : Fragment() {
 
