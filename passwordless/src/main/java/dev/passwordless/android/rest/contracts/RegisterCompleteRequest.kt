@@ -1,6 +1,6 @@
 package dev.passwordless.android.rest.contracts
 
-import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialDescriptor
+import com.google.android.gms.fido.fido2.api.common.PublicKeyCredential
 import com.google.gson.annotations.SerializedName
 
 data class RegisterCompleteRequest (
@@ -8,7 +8,7 @@ data class RegisterCompleteRequest (
     val session: String,
 
     @SerializedName("response")
-    val response: AuthenticatorAttestationRawResponse,
+    val response: PublicKeyCredential,
 
     @SerializedName("nickname")
     val nickname: String?,

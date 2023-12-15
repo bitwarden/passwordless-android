@@ -59,8 +59,10 @@ class RegisterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonRegister.setOnClickListener {
+            lifecycleScope.launch {
+                _passwordless.register(null, null)
+            }
             // todo
-            _passwordless.register(null, null)
             //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
     }
