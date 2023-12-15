@@ -9,17 +9,15 @@ import com.google.android.gms.fido.fido2.Fido2ApiClient
 import com.google.android.gms.fido.fido2.api.common.AuthenticatorErrorResponse
 import com.google.android.gms.fido.fido2.api.common.PublicKeyCredential
 import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialCreationOptions
-import dev.passwordless.android.rest.PasswordlessOptions
 import dev.passwordless.android.rest.PasswordlessHttpClient
 import dev.passwordless.android.rest.PasswordlessHttpClientFactory
-import dev.passwordless.android.rest.contracts.AuthenticatorAttestationRawResponse
+import dev.passwordless.android.rest.PasswordlessOptions
 import dev.passwordless.android.rest.contracts.RegisterBeginRequest
 import dev.passwordless.android.rest.contracts.RegisterBeginResponse
 import dev.passwordless.android.rest.contracts.RegisterCompleteRequest
 import dev.passwordless.android.rest.exceptions.PasswordlessApiException
 import dev.passwordless.android.rest.exceptions.PasswordlessCredentialCreateException
 import dev.passwordless.android.rest.exceptions.ProblemDetails
-import kotlin.Exception
 import kotlinx.coroutines.tasks.await
 
 class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessOptions) {
@@ -82,13 +80,13 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
                 throw PasswordlessCredentialCreateException("Failed to create credential.")
             else -> {
                 val credential = PublicKeyCredential.deserializeFromBytes(bytes)
-                val response = credential.response
-                if (response is AuthenticatorErrorResponse) {
-                    throw PasswordlessCredentialCreateException(response.errorMessage)
+                if (credential.response is AuthenticatorErrorResponse) {
+                    throw PasswordlessCredentialCreateException((credential.response as AuthenticatorErrorResponse).errorMessage)
                 } else {
+                    // credential.toJson() in a type adapter?
                     val request = RegisterCompleteRequest(
                         session = "",
-                        response = response as AuthenticatorAttestationRawResponse,
+                        response = credential,
                         nickname = _nickname,
                         origin = "",
                         rpId = _options.rpId

@@ -62,14 +62,11 @@ class RegisterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonRegister.setOnClickListener {
-            // todo
             lifecycleScope.launch {
                 val httpClient = YourBackendHttpClientFactory.create("https://demo-backend.passwordless.dev/")
                 val responseToken = httpClient.register("Shubham"+ Random.nextDouble()).body()?.token!!
                 _passwordless.register(responseToken)
             }
-
-            //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
     }
 
