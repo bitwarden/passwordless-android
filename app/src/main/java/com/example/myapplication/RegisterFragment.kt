@@ -65,8 +65,8 @@ class RegisterFragment : Fragment() {
         binding.buttonRegister.setOnClickListener {
             lifecycleScope.launch {
                 val httpClient = YourBackendHttpClientFactory.create(DemoPasswordlessOptions.ORIGIN)
-                //todo: update this to get input from user
-                val responseToken = httpClient.register("Shubham"+ Random.nextDouble()).body()?.token!!
+                val alias = binding.aliasEditText.text.toString()
+                val responseToken = httpClient.register(alias).body()?.token!!
                 _passwordless.register(responseToken)
             }
         }

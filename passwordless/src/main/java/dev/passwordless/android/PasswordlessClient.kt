@@ -33,12 +33,13 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
         _httpClient = PasswordlessHttpClientFactory.create(options)
     }
 
+    /**
+     * @param token The registration token obtained from your backend
+     * @param nickname The nickname for the credential
+     * @return
+     */
     suspend fun register(token: String, nickname: String? = null): PendingIntent? {
         _nickname = nickname
-
-        // 1. Call own back-end
-        // 2. Call /register/begin
-        // 3. Create token
 
         val beginInputModel = RegisterBeginRequest(
             token = token,
@@ -81,7 +82,8 @@ class PasswordlessClient(fido2ApiClient: Fido2ApiClient?, options: PasswordlessO
             else -> {
                 val credential = PublicKeyCredential.deserializeFromBytes(bytes)
                 if (credential.response is AuthenticatorErrorResponse) {
-                    throw PasswordlessCredentialCreateException((credential.response as AuthenticatorErrorResponse).errorMessage)
+                    val errorResponse = credential.response as AuthenticatorErrorResponse
+                    throw PasswordlessCredentialCreateException(errorResponse.errorMessage)
                 } else {
                     // credential.toJson() in a type adapter?
                     val request = RegisterCompleteRequest(
