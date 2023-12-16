@@ -38,7 +38,7 @@ class RegisterFragment : Fragment() {
         val fido2ApiClient = Fido.getFido2ApiClient(this.requireContext().applicationContext)
         val options = PasswordlessOptions(DemoPasswordlessOptions.API_KEY,DemoPasswordlessOptions.RP_ID,DemoPasswordlessOptions.ORIGIN,DemoPasswordlessOptions.API_URL)
 
-        _passwordless = PasswordlessClient(fido2ApiClient, options)
+        _passwordless = PasswordlessClient(fido2ApiClient, options,this.activity)
 
         _registrationIntentLauncher = registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult()
