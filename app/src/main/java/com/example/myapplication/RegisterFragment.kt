@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.databinding.FragmentRegisterBinding
 import com.example.myapplication.services.yourbackend.YourBackendHttpClientFactory
 import com.example.myapplication.services.yourbackend.config.DemoPasswordlessOptions
+import com.example.myapplication.services.yourbackend.contracts.UserRegisterRequest
 import com.google.android.gms.fido.Fido
 import dev.passwordless.android.PasswordlessClient
 import dev.passwordless.android.rest.PasswordlessOptions
@@ -64,7 +65,8 @@ class RegisterFragment : Fragment() {
             lifecycleScope.launch {
                 val httpClient = YourBackendHttpClientFactory.create(DemoPasswordlessOptions.ORIGIN)
                 val alias = binding.aliasEditText.text.toString()
-                val responseToken = httpClient.register(alias).body()?.token!!
+                val username = binding.usernameEditText.text.toString()
+                val responseToken = httpClient.register(UserRegisterRequest(username,alias)).body()?.token!!
                 _passwordless.register(responseToken)
             }
         }
