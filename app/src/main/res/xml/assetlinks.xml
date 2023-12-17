@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="assetlinks">https://your.backend.url/.well-known/assetlinks.json</string>
+</resources>

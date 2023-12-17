@@ -7,6 +7,7 @@ import retrofit2.http.*
 
 interface YourBackendHttpClient {
         @GET("/create-token")
+        @Headers("ngrok-skip-browser-warning:true")
         suspend fun register(@Query("alias") alias: String): Response<RegisterTokenResponse>
 
         @POST("/verify-signin")
