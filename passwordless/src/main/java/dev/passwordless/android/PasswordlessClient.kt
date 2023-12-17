@@ -21,6 +21,7 @@ import dev.passwordless.android.rest.contracts.RegisterBeginRequest
 import dev.passwordless.android.rest.contracts.RegisterBeginResponse
 import dev.passwordless.android.rest.contracts.RegisterCompleteRequest
 import dev.passwordless.android.rest.contracts.getPublicKeyCredentialParameters
+import dev.passwordless.android.rest.converters.PublicKeyCredentialConverter
 import dev.passwordless.android.rest.exceptions.PasswordlessApiException
 import dev.passwordless.android.rest.exceptions.PasswordlessCredentialCreateException
 import dev.passwordless.android.rest.exceptions.ProblemDetails
@@ -110,11 +111,13 @@ class PasswordlessClient(
                     throw PasswordlessCredentialCreateException(errorResponse.errorMessage)
                 } else {
                     // credential.toJson() in a type adapter?
+                    val json = PublicKeyCredentialConverter.convertJson(credential.toJson())
+                    Log.d("PublicKeyCredential JSON",json)
                     val request = RegisterCompleteRequest(
                         session = sessionId!!,
-                        response = credential,
+                        response = json,
                         nickname = _nickname,
-                        origin = "",
+                        origin = _options.origin,
                         rpId = _options.rpId
                     )
                     // todo: need to remove runBlocking

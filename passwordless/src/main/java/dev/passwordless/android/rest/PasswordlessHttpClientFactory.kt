@@ -6,6 +6,7 @@ import dev.passwordless.android.rest.interceptors.ApikeyHeaderInterceptor
 import dev.passwordless.android.rest.interceptors.ProblemDetailsInterceptor
 import dev.passwordless.android.rest.serializers.Base64UrlDeserializer
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -18,6 +19,7 @@ object PasswordlessHttpClientFactory {
         val client = OkHttpClient.Builder()
             .addInterceptor(ApikeyHeaderInterceptor(options.apiKey))
             .addInterceptor(ProblemDetailsInterceptor())
+            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
 
         return Retrofit.Builder()

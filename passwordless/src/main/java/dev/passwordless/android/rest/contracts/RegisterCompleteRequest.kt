@@ -8,7 +8,7 @@ data class RegisterCompleteRequest (
     val session: String,
 
     @SerializedName("response")
-    val response: PublicKeyCredential,
+    val response: String,
 
     @SerializedName("nickname")
     val nickname: String?,
