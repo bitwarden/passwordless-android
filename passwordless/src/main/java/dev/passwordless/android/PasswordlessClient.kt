@@ -14,6 +14,8 @@ import com.google.android.gms.fido.fido2.api.common.PublicKeyCredential
 import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialCreationOptions
 import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialRpEntity
 import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialUserEntity
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import dev.passwordless.android.rest.PasswordlessHttpClient
 import dev.passwordless.android.rest.PasswordlessHttpClientFactory
 import dev.passwordless.android.rest.PasswordlessOptions
@@ -111,11 +113,12 @@ class PasswordlessClient(
                     throw PasswordlessCredentialCreateException(errorResponse.errorMessage)
                 } else {
                     // credential.toJson() in a type adapter?
-                    val json = PublicKeyCredentialConverter.convertJson(credential.toJson())
-                    Log.d("PublicKeyCredential JSON",json)
+//                    val json = PublicKeyCredentialConverter.convertJson(credential.toJson())
+//                    Log.d("PublicKeyCredential JSON",json)
+                    val gson = Gson()
                     val request = RegisterCompleteRequest(
                         session = sessionId!!,
-                        response = json,
+                        response = gson.fromJson(credential.toJson(), JsonObject::class.java),
                         nickname = _nickname,
                         origin = _options.origin,
                         rpId = _options.rpId
