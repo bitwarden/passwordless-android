@@ -9,7 +9,8 @@ import retrofit2.http.*
 
 interface YourBackendHttpClient {
         @POST("/users/register")
-        @Headers("ngrok-skip-browser-warning:true")
+
+        @Headers("X-Pinggy-No-Screen:true")
         suspend fun register(@Body request: UserRegisterRequest): Response<RegisterTokenResponse>
 
         @POST("/users/login")

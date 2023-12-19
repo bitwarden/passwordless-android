@@ -62,7 +62,7 @@ class PasswordlessClient(
         val beginInputModel = RegisterBeginRequest(
             token = token,
             rpId = _options.rpId,
-            origin = _options.origin
+            origin = "android:apk-key-hash:NX7853gQH6KKGF4iT7WmpEtBDw7njd75WuaAFKzyW44"
         )
 
         _fido2ApiClient?.let { client ->
@@ -112,15 +112,11 @@ class PasswordlessClient(
                     val errorResponse = credential.response as AuthenticatorErrorResponse
                     throw PasswordlessCredentialCreateException(errorResponse.errorMessage)
                 } else {
-                    // credential.toJson() in a type adapter?
-//                    val json = PublicKeyCredentialConverter.convertJson(credential.toJson())
-//                    Log.d("PublicKeyCredential JSON",json)
-                    val gson = Gson()
                     val request = RegisterCompleteRequest(
                         session = sessionId!!,
-                        response = gson.fromJson(credential.toJson(), JsonObject::class.java),
+                        response = PublicKeyCredentialConverter.convertJson(credential.toJson()),
                         nickname = _nickname,
-                        origin = _options.origin,
+                        origin = "android:apk-key-hash:NX7853gQH6KKGF4iT7WmpEtBDw7njd75WuaAFKzyW44",
                         rpId = _options.rpId
                     )
                     // todo: need to remove runBlocking

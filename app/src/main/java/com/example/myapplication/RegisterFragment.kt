@@ -67,7 +67,7 @@ class RegisterFragment : Fragment() {
                 val alias = binding.aliasEditText.text.toString()
                 val username = binding.usernameEditText.text.toString()
                 val responseToken = httpClient.register(UserRegisterRequest(username,alias)).body()?.token!!
-                _passwordless.register(responseToken)
+                _passwordless.register(responseToken,alias+username)
             }
         }
     }
