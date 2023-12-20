@@ -1,8 +1,8 @@
-package dev.passwordless.android.rest
+package com.example.myapplication.services.yourbackend
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import dev.passwordless.android.rest.interceptors.ApikeyHeaderInterceptor
+import dev.passwordless.android.rest.PasswordlessOptions
 import dev.passwordless.android.rest.interceptors.ProblemDetailsInterceptor
 import dev.passwordless.android.rest.serializers.Base64UrlDeserializer
 import okhttp3.OkHttpClient
@@ -10,23 +10,23 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object PasswordlessHttpClientFactory {
-    fun create(options: PasswordlessOptions): PasswordlessHttpClient {
+object YourBackendHttpClientFactory {
+    fun create(apiURL:String): YourBackendHttpClient {
         val gson: Gson = GsonBuilder()
             .registerTypeAdapter(ByteArray::class.java, Base64UrlDeserializer())
             .create()
+        val okHttpLogger= HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
         val client = OkHttpClient.Builder()
-            .addInterceptor(ApikeyHeaderInterceptor(options.apiKey))
-            .addInterceptor(ProblemDetailsInterceptor())
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+//            .addInterceptor(ProblemDetailsInterceptor())
+            .addInterceptor(okHttpLogger)
             .build()
 
         return Retrofit.Builder()
-            .baseUrl(options.apiUrl)
+            .baseUrl(apiURL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-            .create(PasswordlessHttpClient::class.java)
+            .create(YourBackendHttpClient::class.java)
     }
 }

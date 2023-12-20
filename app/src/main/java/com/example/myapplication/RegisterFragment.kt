@@ -11,6 +11,9 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.databinding.FragmentRegisterBinding
+import com.example.myapplication.services.yourbackend.YourBackendHttpClientFactory
+import com.example.myapplication.services.yourbackend.config.DemoPasswordlessOptions
+import com.example.myapplication.services.yourbackend.contracts.UserRegisterRequest
 import com.google.android.gms.fido.Fido
 import dev.passwordless.android.PasswordlessClient
 import dev.passwordless.android.rest.PasswordlessOptions
@@ -34,9 +37,14 @@ class RegisterFragment : Fragment() {
 
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         val fido2ApiClient = Fido.getFido2ApiClient(this.requireContext().applicationContext)
-        val options = PasswordlessOptions("", "", "", "")
 
-        _passwordless = PasswordlessClient(fido2ApiClient, options)
+        val options = PasswordlessOptions(
+            DemoPasswordlessOptions.API_KEY,
+            DemoPasswordlessOptions.RP_ID,
+            DemoPasswordlessOptions.ORIGIN,
+            DemoPasswordlessOptions.API_URL)
+
+        _passwordless = PasswordlessClient(fido2ApiClient, options,this.activity)
 
         _registrationIntentLauncher = registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult()
@@ -59,9 +67,13 @@ class RegisterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonRegister.setOnClickListener {
-            // todo
-            _passwordless.register(null, null)
-            //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            lifecycleScope.launch {
+                val httpClient = YourBackendHttpClientFactory.create(DemoPasswordlessOptions.YOUR_BACKEND_URL)
+                val alias = binding.aliasEditText.text.toString()
+                val username = binding.usernameEditText.text.toString()
+                val responseToken = httpClient.register(UserRegisterRequest(username,alias)).body()?.token!!
+                _passwordless.register(responseToken,alias+username)
+            }
         }
     }
 

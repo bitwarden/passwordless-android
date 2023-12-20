@@ -15,12 +15,12 @@ class ProblemDetailsInterceptor(val _serializer: JsonSerializer) : Interceptor {
         val response = chain.proceed(chain.request())
 
         if (!response.isSuccessful) {
-            val contentType = response.headers().get("Content-Type")
+            val contentType = response.headers["Content-Type"]
             if (contentType != "application/problem+json") {
                 return response
             }
 
-            val json = response.body()!!.string()
+            val json = response.body!!.string()
             val problemDetails = _serializer.get().fromJson(json, ProblemDetails::class.java)
             throw PasswordlessApiException(problemDetails)
         }
