@@ -63,7 +63,7 @@ class PasswordlessClient(
             origin = _options.origin
         )
 
-        _fido2ApiClient?.let { client ->
+        _fido2ApiClient?.let { _ ->
             try {
                 val beginResponse = _httpClient.registerBegin(beginInputModel)
                 if (!beginResponse.isSuccessful) {

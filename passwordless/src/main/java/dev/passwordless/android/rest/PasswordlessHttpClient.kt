@@ -10,7 +10,6 @@ interface PasswordlessHttpClient {
      * This endpoint is used to begin the registration process.
      */
     @POST("/register/begin")
-    @Headers("ngrok-skip-browser-warning:true")
     suspend fun registerBegin(@Body inputModel: RegisterBeginRequest): Response<RegisterBeginResponse>
 
     /**
@@ -21,6 +20,5 @@ interface PasswordlessHttpClient {
      * @return RegisterCompleteResponse contains the session token
      */
     @POST("/register/complete")
-    @Headers("ngrok-skip-browser-warning:true")
     suspend fun registerComplete(@Body inputModel: RegisterCompleteRequest): Response<RegisterCompleteResponse>
 }
