@@ -14,8 +14,6 @@ import com.google.android.gms.fido.fido2.api.common.PublicKeyCredential
 import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialCreationOptions
 import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialRpEntity
 import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialUserEntity
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import dev.passwordless.android.rest.PasswordlessHttpClient
 import dev.passwordless.android.rest.PasswordlessHttpClientFactory
 import dev.passwordless.android.rest.PasswordlessOptions
@@ -62,7 +60,7 @@ class PasswordlessClient(
         val beginInputModel = RegisterBeginRequest(
             token = token,
             rpId = _options.rpId,
-            origin = "android:apk-key-hash:NX7853gQH6KKGF4iT7WmpEtBDw7njd75WuaAFKzyW44"
+            origin = _options.origin
         )
 
         _fido2ApiClient?.let { client ->
@@ -116,7 +114,7 @@ class PasswordlessClient(
                         session = sessionId!!,
                         response = PublicKeyCredentialConverter.convertJson(credential.toJson()),
                         nickname = _nickname,
-                        origin = "android:apk-key-hash:NX7853gQH6KKGF4iT7WmpEtBDw7njd75WuaAFKzyW44",
+                        origin = _options.origin,
                         rpId = _options.rpId
                     )
                     // todo: need to remove runBlocking
