@@ -2,9 +2,10 @@ package com.example.myapplication.services.yourbackend.config
 
 class DemoPasswordlessOptions {
     companion object {
-        const val API_KEY = "personal:public:fef3b07e9022454cb72377b96d1ac329"
-        const val RP_ID = "mrfc7g-ip-163-53-252-8.tunnelmole.net"
-        const val ORIGIN = "https://mrfc7g-ip-163-53-252-8.tunnelmole.net"
+        const val API_KEY = "yourapp:public:ab2e4350d43946f7b4c93d98fa2c765e"
+        const val RP_ID = "example.com"
+        const val YOUR_BACKEND_URL = "https://example.com"
+        const val ORIGIN = "android:apk-key-hash:NX7853gQH6KKGF4iT7WmpEtBDw7njd75WuaAFKzyW44"
         const val API_URL = "https://v4.passwordless.dev"
     }
 }

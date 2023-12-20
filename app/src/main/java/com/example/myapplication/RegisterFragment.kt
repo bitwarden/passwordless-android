@@ -37,7 +37,12 @@ class RegisterFragment : Fragment() {
 
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         val fido2ApiClient = Fido.getFido2ApiClient(this.requireContext().applicationContext)
-        val options = PasswordlessOptions(DemoPasswordlessOptions.API_KEY,DemoPasswordlessOptions.RP_ID,DemoPasswordlessOptions.ORIGIN,DemoPasswordlessOptions.API_URL)
+
+        val options = PasswordlessOptions(
+            DemoPasswordlessOptions.API_KEY,
+            DemoPasswordlessOptions.RP_ID,
+            DemoPasswordlessOptions.ORIGIN,
+            DemoPasswordlessOptions.API_URL)
 
         _passwordless = PasswordlessClient(fido2ApiClient, options,this.activity)
 
@@ -63,7 +68,7 @@ class RegisterFragment : Fragment() {
 
         binding.buttonRegister.setOnClickListener {
             lifecycleScope.launch {
-                val httpClient = YourBackendHttpClientFactory.create(DemoPasswordlessOptions.ORIGIN)
+                val httpClient = YourBackendHttpClientFactory.create(DemoPasswordlessOptions.YOUR_BACKEND_URL)
                 val alias = binding.aliasEditText.text.toString()
                 val username = binding.usernameEditText.text.toString()
                 val responseToken = httpClient.register(UserRegisterRequest(username,alias)).body()?.token!!
