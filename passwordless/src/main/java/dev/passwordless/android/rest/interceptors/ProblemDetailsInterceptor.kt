@@ -14,16 +14,16 @@ class ProblemDetailsInterceptor(val _serializer: JsonSerializer) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
 
-//        if (!response.isSuccessful) {
-//            val contentType = response.headers().get("Content-Type")
-//            if (contentType != "application/problem+json") {
-//                return response
-//            }
-//
-//            val json = response.body()!!.string()
-//            val problemDetails = _serializer.get().fromJson(json, ProblemDetails::class.java)
-//            throw PasswordlessApiException(problemDetails)
-//        }
+        if (!response.isSuccessful) {
+            val contentType = response.headers["Content-Type"]
+            if (contentType != "application/problem+json") {
+                return response
+            }
+
+            val json = response.body!!.string()
+            val problemDetails = _serializer.get().fromJson(json, ProblemDetails::class.java)
+            throw PasswordlessApiException(problemDetails)
+        }
 
         return response
     }
