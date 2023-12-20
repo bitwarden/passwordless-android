@@ -83,7 +83,7 @@ class PasswordlessClient(
                     .setParameters(beginResult.data.getPublicKeyCredentialParameters())
                     .build()
 
-                val creationIntent = _fido2ApiClient.getRegisterPendingIntent(credentialCreationOptions)
+                val creationIntent = client.getRegisterPendingIntent(credentialCreationOptions)
 
                 val createdCredential = creationIntent.await()
                 createCredentialIntentLauncher!!.launch(
