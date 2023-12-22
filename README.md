@@ -12,15 +12,31 @@ Passwordless.dev consists of three key parts:
 ## Requirements
 * Android 9+ (API 28)
 ## Setting up Passwordless-android
-1. Generate SHA256 for your app. Refer [link](https://stackoverflow.com/questions/42290681/android-studio-only-gives-me-sha1-i-need-sha256)
+1. Generate SHA256 for your app.
+#### Option 1:
+
+#### Windows 
+```cmd
+keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+```
+#### MAC/Linux
+```bash
+keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+```
+#### Option 2:
+Go to the root directory of the project from the terminal and run the below command
+```bash
+./gradlew signingReport
+```
 2. Put this SHA256 along with your root android package name in your backend to generate assetlink.json for your app at "https://yourexample.com/.well-known/assetlinks.json"
 If you are using [example-nodejs-backend](https://github.com/passwordless/passwordless-nodejs-example). then just put these 2 variables in .env file.
-3. Generate APK key hash, this hash is required in the origin field to authenticate the app passwordless.
-### MAC/Linux
+
+4. Generate APK key hash, this hash is required in the origin field to authenticate the app passwordless.
+#### MAC/Linux
 ```bash
 keytool -list -v -keystore ~/.android/debug.keystore | grep "SHA256: " | cut -d " " -f 3 | xxd -r -p | openssl base64 | sed 's/=//g'
 ```
-### Windows 
+#### Windows 
 Run this on PowerShell
 ```powershell
 # Run keytool command and extract SHA256 hash
