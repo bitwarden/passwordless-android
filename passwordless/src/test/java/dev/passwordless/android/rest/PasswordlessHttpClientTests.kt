@@ -3,6 +3,8 @@ package dev.passwordless.android.rest
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dev.passwordless.android.rest.contracts.*
+import dev.passwordless.android.rest.contracts.register.RegisterBeginRequest
+import dev.passwordless.android.rest.contracts.register.RegisterBeginResponse
 import dev.passwordless.android.rest.converters.Base64UrlConverter
 import dev.passwordless.android.rest.serializers.Base64UrlDeserializer
 import junit.framework.TestCase.assertEquals

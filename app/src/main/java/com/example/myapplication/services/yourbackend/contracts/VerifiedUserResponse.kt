@@ -1,21 +1,20 @@
 package com.example.myapplication.services.yourbackend.contracts
 
-import android.R.bool
-import android.R.string
-import java.time.LocalDateTime
-import java.util.*
 
+import com.google.gson.annotations.SerializedName
 
 data class VerifiedUserResponse(
-    val userId: string,
-    val credentialId: ByteArray,
-    val success: bool,
-    val timestamp: LocalDateTime,
-    val rpId: string,
-    val origin: string,
-    val device: string,
-    val country: string,
-    val nickname: string,
-    val expiresAt: LocalDateTime,
-    val tokenId: UUID,
-    val type: string)
+    @SerializedName("userId") val userId: String,
+    @SerializedName("credentialId") val credentialId: String,
+    @SerializedName("success") val success: Boolean,
+    @SerializedName("timestamp") val timestamp: String,
+    @SerializedName("rpId") val rpId: String,
+    @SerializedName("origin") val origin: String,
+    @SerializedName("device") val device: String,
+    @SerializedName("country") val country: String,
+    @SerializedName("nickname") val nickname: String,
+    @SerializedName("expiresAt") val expiresAt: String,
+    @SerializedName("tokenId") val tokenId: String,
+    @SerializedName("type") val type: String
+)
+

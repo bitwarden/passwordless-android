@@ -1,91 +1,116 @@
 package dev.passwordless.android
 
-import android.app.Activity
+import android.content.Context
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.gms.fido.Fido
-import com.google.android.gms.fido.fido2.Fido2ApiClient
-import com.google.android.gms.fido.fido2.api.common.AuthenticatorErrorResponse
-import com.google.android.gms.fido.fido2.api.common.PublicKeyCredential
-import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialCreationOptions
-import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialRpEntity
-import com.google.android.gms.fido.fido2.api.common.PublicKeyCredentialUserEntity
+import androidx.credentials.CreatePublicKeyCredentialRequest
+import androidx.credentials.CreatePublicKeyCredentialResponse
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetPublicKeyCredentialOption
+import androidx.credentials.PublicKeyCredential
 import dev.passwordless.android.rest.PasswordlessHttpClient
 import dev.passwordless.android.rest.PasswordlessHttpClientFactory
 import dev.passwordless.android.rest.PasswordlessOptions
-import dev.passwordless.android.rest.contracts.RegisterBeginRequest
-import dev.passwordless.android.rest.contracts.RegisterBeginResponse
-import dev.passwordless.android.rest.contracts.RegisterCompleteRequest
-import dev.passwordless.android.rest.contracts.getPublicKeyCredentialParameters
+import dev.passwordless.android.rest.contracts.login.LoginBeginRequest
+import dev.passwordless.android.rest.contracts.login.LoginBeginResponse
+import dev.passwordless.android.rest.contracts.login.LoginCompleteRequest
+import dev.passwordless.android.rest.contracts.login.LoginCompleteResponse
+import dev.passwordless.android.rest.contracts.register.RegisterBeginRequest
+import dev.passwordless.android.rest.contracts.register.RegisterBeginResponse
+import dev.passwordless.android.rest.contracts.register.RegisterCompleteRequest
+import dev.passwordless.android.rest.contracts.register.RegisterCompleteResponse
 import dev.passwordless.android.rest.converters.PublicKeyCredentialConverter
 import dev.passwordless.android.rest.exceptions.PasswordlessApiException
-import dev.passwordless.android.rest.exceptions.PasswordlessCredentialCreateException
 import dev.passwordless.android.rest.exceptions.ProblemDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 
 /**
- * Manages the communication with the Fido2 API and performs registration operations for the Passwordless authentication flow.
+ * Manages the communication with the Credential Manager API and performs registration operations for the Passwordless authentication flow.
  *
- * @param fido2ApiClient The Fido2ApiClient instance for interacting with the Fido2 API.
  * @param options The configuration options for Passwordless authentication.
- * @param activity The ComponentActivity associated with the PasswordlessClient for launching the registration intent.
- * @param externalScope The CoroutineScope for launching coroutines related to Passwordless operations (optional).
- * If this scope is not provided, then call the cancel function in onDestroy method.
- * @param onHandleRegistrationResult Callback function to handle the result of the registration process.
  */
 class PasswordlessClient(
-    fido2ApiClient: Fido2ApiClient,
-    options: PasswordlessOptions,
-    activity: ComponentActivity,
-    externalScope: CoroutineScope? = null,
-    private val onHandleRegistrationResult: (Boolean, Any?) -> Unit
+    private val _options: PasswordlessOptions
 ) {
-    private val _fido2ApiClient: Fido2ApiClient = fido2ApiClient
-    private val _httpClient: PasswordlessHttpClient
-    private val _options: PasswordlessOptions = options
-    private val _externalScope = externalScope ?: CoroutineScope(Dispatchers.Main)
+    private val _httpClient: PasswordlessHttpClient = PasswordlessHttpClientFactory.create(_options)
 
+    private lateinit var _coroutineScope: CoroutineScope
+    private lateinit var credentialManager: CredentialManager
+    private lateinit var _context: Context
+    fun setCoroutineScope(coroutineScope: CoroutineScope): PasswordlessClient =
+        apply { _coroutineScope = coroutineScope }
 
-    private val _createCredentialIntentLauncher = activity.registerForActivityResult(
-        ActivityResultContracts.StartIntentSenderForResult(),
-        ::handleRegistration
-    )
+    fun setContext(context: Context): PasswordlessClient =
+        apply {
+            _context = context
+            credentialManager = CredentialManager.create(_context)
+        }
+
+    private inline fun <reified T> Response<T>.throwIfNetworkRequestFailed(): Response<T> {
+        if (!isSuccessful || body() == null) {
+            val problemDetails = ProblemDetails("", message(), code(), "")
+            throw PasswordlessApiException(problemDetails)
+        }
+        return this
+    }
 
     /**
-     * Stores data related to the current registration request, specifically the session ID and nickname.
-     */
-    private var _currentRequestData: Pair<String, String>? = null
-
-    /**
-     * A flag used to ensure only one registration request is processed at a time until completion.
-     * When set to `true`, it indicates that a registration request is already in progress.
-     * When set to `false`, a new registration request can be initiated.
-     */
-    private var _lock = false
-
-    /**
-     * Provides the status of any ongoing registration request.
+     * Initiates the login process for Passwordless authentication.
      *
-     * - `true`: Indicates that a previous registration request is already in progress.
-     *    A new request should wait until the ongoing one completes or fails.
-     *
-     * - `false`: Indicates that no registration request is currently in progress.
-     *    A new registration request can be initiated.
+     * @param alias The user alias for authentication.
+     * @param onLoginResult Callback function to handle the login result.
+     *                     It provides a boolean indicating success, an optional exception in case of failure,
+     *                     and the response containing information about the completed login if successful.
      */
-    val isRegistrationInProgress
-        get() = _lock
+    fun login(
+        alias: String,
+        onLoginResult: (Boolean, Exception?, LoginCompleteResponse?) -> Unit
+    ) = _coroutineScope.launch(Dispatchers.IO) {
+        try {
+            val beginInputModel = LoginBeginRequest(
+                alias = alias,
+                rpId = _options.rpId,
+                origin = _options.origin
+            )
+            val beginResponse = _httpClient
+                .loginBegin(beginInputModel)
+                .throwIfNetworkRequestFailed()
 
+            val beginResponseData: LoginBeginResponse = beginResponse.body()!!
+            val getPublicKeyCredentialOption =
+                GetPublicKeyCredentialOption(beginResponseData.data.toString(), null)
 
-    init {
-        _httpClient = PasswordlessHttpClientFactory.create(options)
+            val credentialResponse = credentialManager.getCredential(
+                _context,
+                GetCredentialRequest(
+                    listOf(
+                        getPublicKeyCredentialOption
+                    )
+                )
+            )
+            val publicKeyCredential = credentialResponse.credential as PublicKeyCredential
+
+            val completeInputModel = LoginCompleteRequest(
+                session = beginResponseData.session,
+                response = PublicKeyCredentialConverter.convertJson(publicKeyCredential.authenticationResponseJson),
+                origin = _options.origin,
+                rpId = _options.rpId
+            )
+            val completeResponse = _httpClient
+                .loginComplete(completeInputModel)
+                .throwIfNetworkRequestFailed()
+
+            onLoginResult(true, null, completeResponse.body()!!)
+        } catch (e: Exception) {
+            Log.e("passwordless-login-begin", "Cannot initiate login request", e)
+            withContext(Dispatchers.Main) {
+                onLoginResult(false, e, null)
+            }
+        }
     }
 
     /**
@@ -94,136 +119,55 @@ class PasswordlessClient(
      * @param token The registration token obtained from the backend.
      * @param nickname The nickname for the credential.
      * @param onRegisterResult Callback function to handle the registration result.
+     *                         It provides a boolean indicating success, an optional exception in case of failure,
+     *                         and the response containing information about the completed registration if successful.
      */
     fun register(
         token: String,
         nickname: String = "",
-        onRegisterResult: (Boolean, Exception?) -> Unit
-    ) = _externalScope.launch {
-        synchronized(this) {
-            if (_lock) {
-                onRegisterResult(false, Exception("One request already in progress"))
-                return@launch
+        onRegisterResult: (Boolean, Exception?, RegisterCompleteResponse?) -> Unit
+    ) = _coroutineScope.launch(Dispatchers.IO) {
+        try {
+            val beginInputModel = RegisterBeginRequest(
+                token = token,
+                rpId = _options.rpId,
+                origin = _options.origin
+            )
+
+            val beginResponse =
+                _httpClient
+                    .registerBegin(beginInputModel)
+                    .throwIfNetworkRequestFailed()
+
+
+            val beginResult: RegisterBeginResponse = beginResponse.body()!!
+
+            val request = CreatePublicKeyCredentialRequest(beginResult.data.toString())
+            val response = credentialManager.createCredential(
+                _context,
+                request
+            ) as CreatePublicKeyCredentialResponse
+
+            val completeRequest = RegisterCompleteRequest(
+                session = beginResult.session,
+                response = PublicKeyCredentialConverter.convertJson(response.registrationResponseJson),
+                nickname = nickname,
+                origin = _options.origin,
+                rpId = _options.rpId
+            )
+            val registerCompleteResponse =
+                _httpClient.registerComplete(completeRequest).throwIfNetworkRequestFailed()
+
+            withContext(Dispatchers.Main) {
+                onRegisterResult(true, null, registerCompleteResponse.body())
             }
-            _lock = true
-        }
-        withContext(Dispatchers.IO) {
-            try {
-                val beginInputModel = RegisterBeginRequest(
-                    token = token,
-                    rpId = _options.rpId,
-                    origin = _options.origin
-                )
-
-                val beginResponse = _httpClient.registerBegin(beginInputModel)
-
-                if (!beginResponse.isSuccessful) {
-                    val problemDetails =
-                        ProblemDetails("", beginResponse.message(), beginResponse.code(), "")
-                    throw PasswordlessApiException(problemDetails)
-                }
-
-                val beginResult: RegisterBeginResponse = beginResponse.body()!!
-                _currentRequestData = Pair(beginResult.session, nickname)
-
-                val credentialCreationOptions = publicKeyCredentialCreationOptions(beginResult)
-
-                val createdCredential =
-                    _fido2ApiClient.getRegisterPendingIntent(credentialCreationOptions)
-                        .await()
-                        ?: throw Exception("Creation intent is null")
-
-                _createCredentialIntentLauncher.launch(
-                    IntentSenderRequest.Builder(
-                        createdCredential
-                    ).build()
-                )
-
-                withContext(Dispatchers.Main) {
-                    onRegisterResult(true, null)
-                }
-            } catch (e: Exception) {
-                Log.e("passwordless-register-begin", "Cannot call registerRequest", e)
-                synchronized(this) {
-                    _currentRequestData = null
-                    _lock = false
-                }
-                withContext(Dispatchers.Main) {
-                    onRegisterResult(false, e)
-                }
+        } catch (e: Exception) {
+            Log.e("passwordless-register-begin", "Cannot call registerRequest", e)
+            withContext(Dispatchers.Main) {
+                onRegisterResult(false, e, null)
             }
         }
     }
 
-    private fun publicKeyCredentialCreationOptions(beginResult: RegisterBeginResponse): PublicKeyCredentialCreationOptions =
-        beginResult.data.run {
-            PublicKeyCredentialCreationOptions
-                .Builder()
-                .setChallenge(challenge)
-                .setTimeoutSeconds(timeout.toDouble())
-                .setRp(PublicKeyCredentialRpEntity(rp.id, rp.name, null))
-                .setUser(PublicKeyCredentialUserEntity(user.id, user.name, "", user.displayName))
-                .setParameters(getPublicKeyCredentialParameters())
-                .build()
-        }
 
-
-    /**
-     * Handles the result of the registration process when the credential creation intent returns.
-     *
-     * @param activityResult The result of the registration intent.
-     */
-    private fun handleRegistration(activityResult: ActivityResult) =
-        _externalScope.launch(Dispatchers.IO) {
-            try {
-                val bytes = activityResult.data?.getByteArrayExtra(Fido.FIDO2_KEY_CREDENTIAL_EXTRA)
-                val sessionId = _currentRequestData!!.first
-                val nickname = _currentRequestData!!.second
-                when {
-                    (activityResult.resultCode != Activity.RESULT_OK || bytes == null) ->
-                        throw PasswordlessCredentialCreateException("Failed to create credential.")
-
-                    else -> {
-                        val credential = PublicKeyCredential.deserializeFromBytes(bytes)
-                        if (credential.response is AuthenticatorErrorResponse) {
-                            val errorResponse = credential.response as AuthenticatorErrorResponse
-                            throw PasswordlessCredentialCreateException(errorResponse.errorMessage)
-                        } else {
-                            val request = RegisterCompleteRequest(
-                                session = sessionId,
-                                response = PublicKeyCredentialConverter.convertJson(credential.toJson()),
-                                nickname = nickname,
-                                origin = _options.origin,
-                                rpId = _options.rpId
-                            )
-                            val response = _httpClient.registerComplete(request)
-                            if (response.isSuccessful) {
-                                withContext(Dispatchers.Main) {
-                                    onHandleRegistrationResult(true, response.body())
-                                }
-                            } else {
-                                throw PasswordlessCredentialCreateException("Network call failed")
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    onHandleRegistrationResult(false, e)
-                }
-            } finally {
-                synchronized(this) {
-                    _currentRequestData = null
-                    _lock = false
-                }
-            }
-        }
-
-    /**
-     * Cancel all ongoing coroutines in the scope.
-     * If no scope is provided then this should be called in onDestroy
-     */
-    fun cancel() {
-        _externalScope.cancel()
-    }
 }

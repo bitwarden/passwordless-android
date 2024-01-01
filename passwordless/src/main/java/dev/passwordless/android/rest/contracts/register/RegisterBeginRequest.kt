@@ -1,4 +1,4 @@
-package dev.passwordless.android.rest.contracts
+package dev.passwordless.android.rest.contracts.register
 
 import com.google.gson.annotations.SerializedName
 
