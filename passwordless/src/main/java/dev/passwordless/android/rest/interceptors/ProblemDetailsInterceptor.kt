@@ -2,14 +2,11 @@ package dev.passwordless.android.rest.interceptors
 
 import dev.passwordless.android.rest.exceptions.PasswordlessApiException
 import dev.passwordless.android.rest.exceptions.ProblemDetails
-import dev.passwordless.android.rest.serializers.JsonSerializer
 import dev.passwordless.android.rest.serializers.JsonSerializerImpl
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class ProblemDetailsInterceptor(val _serializer: JsonSerializer) : Interceptor {
-    constructor() : this(JsonSerializerImpl())
-
+class ProblemDetailsInterceptor : Interceptor {
     @Throws(PasswordlessApiException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
@@ -19,9 +16,10 @@ class ProblemDetailsInterceptor(val _serializer: JsonSerializer) : Interceptor {
             if (contentType != "application/problem+json") {
                 return response
             }
+            val serializer = JsonSerializerImpl.get()
 
             val json = response.body!!.string()
-            val problemDetails = _serializer.get().fromJson(json, ProblemDetails::class.java)
+            val problemDetails = serializer.fromJson(json, ProblemDetails::class.java)
             throw PasswordlessApiException(problemDetails)
         }
 

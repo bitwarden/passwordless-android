@@ -75,7 +75,7 @@ class PasswordlessHttpClientTests {
         assert(actualResponse.isSuccessful)
         val actual: RegisterBeginResponse = actualResponse.body()!!
         assertEquals("session_k8QgX8WVditXejKDs4Pyzs6fJXyyW4PeuKVqFRCViPXKPIHElYimU3RhdHVzom9rrEVycm9yTWVzc2FnZaCpQ2hhbGxlbmdlxBAa5GdIcbH1DJMtFy3zpAm0p1RpbWVvdXTN6mCkUnBJZL9hZG1pbmNvbnNvbGUwMS5sZXNzcGFzc3dvcmQuZGV2sEFsbG93Q3JlZGVudGlhbHOQsFVzZXJWZXJpZmljYXRpb24BqkV4dGVuc2lvbnPAziGmeas", actual.session)
-        assertEquals("GuRnSHGx9QyTLRct86QJtA", Base64UrlConverter.convert(actual.data.challenge))
+        assertEquals("GuRnSHGx9QyTLRct86QJtA", Base64UrlConverter.convert(actual.data))
         assertEquals(60000L, actual.data.timeout)
         assertEquals("ok", actual.data.status)
         assertEquals("", actual.data.errorMessage)

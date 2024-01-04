@@ -4,10 +4,10 @@ import androidx.credentials.CreatePublicKeyCredentialRequest
 import androidx.credentials.GetPublicKeyCredentialOption
 import com.google.gson.Gson
 
-class JsonSerializerImpl : JsonSerializer {
+object JsonSerializerImpl : JsonSerializer {
     private val gson: Gson
 
-    constructor() {
+    init {
         val gsonBuilder = Gson().newBuilder()
         gsonBuilder.registerTypeAdapter(ByteArray::class.java, Base64UrlDeserializer())
         gsonBuilder.registerTypeAdapter(CreatePublicKeyCredentialRequest::class.java, CreatePublicKeyCredentialRequestDeserializer())
@@ -18,6 +18,4 @@ class JsonSerializerImpl : JsonSerializer {
     override fun get(): Gson {
         return gson
     }
-
-
 }

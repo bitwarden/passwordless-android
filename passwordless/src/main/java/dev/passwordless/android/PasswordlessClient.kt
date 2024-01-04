@@ -2,11 +2,9 @@ package dev.passwordless.android
 
 import android.content.Context
 import android.util.Log
-import androidx.credentials.CreatePublicKeyCredentialRequest
 import androidx.credentials.CreatePublicKeyCredentialResponse
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
-import androidx.credentials.GetPublicKeyCredentialOption
 import androidx.credentials.PublicKeyCredential
 import dev.passwordless.android.rest.PasswordlessHttpClient
 import dev.passwordless.android.rest.PasswordlessHttpClientFactory
