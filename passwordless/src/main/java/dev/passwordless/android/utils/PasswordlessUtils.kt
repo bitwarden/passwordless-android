@@ -11,10 +11,10 @@ import androidx.credentials.exceptions.publickeycredential.CreatePublicKeyCreden
 
 class PasswordlessUtils {
     companion object {
+
         /**
          * These are types of errors that can occur during passkey creation.
          */
-
         fun getPasskeyFailureMessage(e: Exception): String {
             val message = when (e) {
                 is CreatePublicKeyCredentialDomException -> {

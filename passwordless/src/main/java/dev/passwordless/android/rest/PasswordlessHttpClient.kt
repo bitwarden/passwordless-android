@@ -19,7 +19,6 @@ interface PasswordlessHttpClient {
      * @param inputModel The [RegisterBeginRequest] containing the token, RP ID, and origin.
      * @return A [Response] containing the [RegisterBeginResponse] with session token and PublicKeyCredential JSON
      */
-
     @POST("/register/begin")
     suspend fun registerBegin(@Body inputModel: RegisterBeginRequest): Response<RegisterBeginResponse>
 
@@ -31,9 +30,9 @@ interface PasswordlessHttpClient {
      * @param inputModel The [RegisterCompleteRequest] containing the session, response, RP ID, and origin.
      * @return A [Response] containing the [RegisterCompleteResponse] with session token
      */
-
     @POST("/register/complete")
     suspend fun registerComplete(@Body inputModel: RegisterCompleteRequest): Response<RegisterCompleteResponse>
+
     /**
      * This endpoint is used to begin the login process.
      * Initiates the login process for a user with the provided alias, RP ID, and origin.
@@ -41,9 +40,9 @@ interface PasswordlessHttpClient {
      * @param inputModel The [LoginBeginRequest] containing the necessary information for login initiation.
      * @return A [Response] containing the [LoginBeginResponse] with session and data information.
      */
-
     @POST("/signin/begin")
     suspend fun loginBegin(@Body inputModel: LoginBeginRequest): Response<LoginBeginResponse>
+
     /**
      * This endpoint is used to complete the login process.
      * Is called after a user has provided their credentials.
@@ -51,7 +50,6 @@ interface PasswordlessHttpClient {
      * @param inputModel The [LoginCompleteRequest] containing the session, response, RP ID, and origin.
      * @return A [Response] containing the [LoginCompleteResponse] with session token information.
      */
-
     @POST("/signin/complete")
     suspend fun loginComplete(@Body inputModel: LoginCompleteRequest): Response<LoginCompleteResponse>
 }
