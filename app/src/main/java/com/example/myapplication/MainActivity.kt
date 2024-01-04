@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
          * If there are different activity handling register and signin,
          * then call this on every activity
          */
+
         _passwordless.setContext(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)

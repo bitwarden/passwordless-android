@@ -15,7 +15,11 @@ import retrofit2.http.*
 interface PasswordlessHttpClient {
     /**
      * This endpoint is used to begin the registration process.
+     *
+     * @param inputModel The [RegisterBeginRequest] containing the token, RP ID, and origin.
+     * @return A [Response] containing the [RegisterBeginResponse] with session token and PublicKeyCredential JSON
      */
+
     @POST("/register/begin")
     suspend fun registerBegin(@Body inputModel: RegisterBeginRequest): Response<RegisterBeginResponse>
 
@@ -23,9 +27,11 @@ interface PasswordlessHttpClient {
      * This endpoint is used to complete the registration process.
      * Is generally called after a credential has been successfully created.
      * Stores the public key credential in the RP.
-     * @param inputModel
-     * @return RegisterCompleteResponse contains the session token
+     *
+     * @param inputModel The [RegisterCompleteRequest] containing the session, response, RP ID, and origin.
+     * @return A [Response] containing the [RegisterCompleteResponse] with session token
      */
+
     @POST("/register/complete")
     suspend fun registerComplete(@Body inputModel: RegisterCompleteRequest): Response<RegisterCompleteResponse>
     /**
@@ -35,6 +41,7 @@ interface PasswordlessHttpClient {
      * @param inputModel The [LoginBeginRequest] containing the necessary information for login initiation.
      * @return A [Response] containing the [LoginBeginResponse] with session and data information.
      */
+
     @POST("/signin/begin")
     suspend fun loginBegin(@Body inputModel: LoginBeginRequest): Response<LoginBeginResponse>
     /**
@@ -44,6 +51,7 @@ interface PasswordlessHttpClient {
      * @param inputModel The [LoginCompleteRequest] containing the session, response, RP ID, and origin.
      * @return A [Response] containing the [LoginCompleteResponse] with session token information.
      */
+
     @POST("/signin/complete")
     suspend fun loginComplete(@Body inputModel: LoginCompleteRequest): Response<LoginCompleteResponse>
 }

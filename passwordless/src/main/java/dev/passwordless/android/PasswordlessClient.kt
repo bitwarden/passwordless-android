@@ -66,6 +66,7 @@ class PasswordlessClient(
      *                     It provides a boolean indicating success, an optional exception in case of failure,
      *                     and the response containing information about the completed login if successful.
      */
+
     fun login(
         alias: String,
         onLoginResult: (Boolean, Exception?, LoginCompleteResponse?) -> Unit
@@ -122,6 +123,7 @@ class PasswordlessClient(
      *                         It provides a boolean indicating success, an optional exception in case of failure,
      *                         and the response containing information about the completed registration if successful.
      */
+
     fun register(
         token: String,
         nickname: String = "",
@@ -168,6 +170,4 @@ class PasswordlessClient(
             }
         }
     }
-
-
 }

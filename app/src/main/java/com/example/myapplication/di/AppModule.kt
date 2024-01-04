@@ -15,6 +15,7 @@ import javax.inject.Singleton
 object AppModule {
 
     // Provided a singleton object of PasswordlessClient
+
     @Provides
     @Singleton
     fun providePasswordlessClient(): PasswordlessClient {
