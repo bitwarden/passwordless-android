@@ -82,14 +82,12 @@ class PasswordlessClient(
                 .throwIfNetworkRequestFailed()
 
             val beginResponseData: LoginBeginResponse = beginResponse.body()!!
-            val getPublicKeyCredentialOption =
-                GetPublicKeyCredentialOption(beginResponseData.data.toString(), null)
 
             val credentialResponse = credentialManager.getCredential(
                 _context,
                 GetCredentialRequest(
                     listOf(
-                        getPublicKeyCredentialOption
+                        beginResponseData.data
                     )
                 )
             )
@@ -144,10 +142,9 @@ class PasswordlessClient(
 
             val beginResult: RegisterBeginResponse = beginResponse.body()!!
 
-            val request = CreatePublicKeyCredentialRequest(beginResult.data.toString())
             val response = credentialManager.createCredential(
                 _context,
-                request
+                beginResult.data
             ) as CreatePublicKeyCredentialResponse
 
             val completeRequest = RegisterCompleteRequest(
