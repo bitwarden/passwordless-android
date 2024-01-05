@@ -1,10 +1,10 @@
-package dev.passwordless.android.rest.contracts
+package dev.passwordless.android.rest.contracts.register
 
-import com.google.android.gms.fido.fido2.api.common.PublicKeyCredential
+
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 
-data class RegisterCompleteRequest (
+data class RegisterCompleteRequest(
     @SerializedName("session")
     val session: String,
 
@@ -19,4 +19,4 @@ data class RegisterCompleteRequest (
 
     @SerializedName("rpId")
     val rpId: String
-    )
+)

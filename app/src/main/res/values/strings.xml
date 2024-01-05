@@ -43,4 +43,7 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="already_have_an_account_log_in">Already have an account? Log In</string>
+    <string name="login">Login</string>
+    <string name="don_t_have_an_account_register">Don\'t have an account? Register</string>
 </resources>
