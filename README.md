@@ -61,8 +61,117 @@ Write-Output $base64String
  5. Now, update yourbackend/config/DemoPasswordlessOptions.kt and xml/assetlinks.xml
  6. Run the app!
 
+## Run the Example App
+1. **Setup `PasswordlessOptions` Class**: Begin by configuring the PasswordlessOptions class, as demonstrated in the [example](app/src/main/java/com/example/myapplication/services/yourbackend/config/DemoPasswordlessOptions.kt). Fill in the required parameters:
+``` kotlin
+/**
+ * @property API_URL The Passwordless.dev server url.
+ * @property API_KEY Your public API key.
+ * @property RP_ID This stands for “relying party”; it can be considered as describing the organization responsible for registering and authenticating the user.
+ * Set this as base url for your backend. So, https://<Relying Party ID>/.well-known/assetlinks.json is accessible
+ * @property ORIGIN This is your generated key for your app, refer readme on how to generate this.
+ * String Format: "android:apk-key-hash:<Hash value>" , Example "android:apk-key-hash:NX7853gQH6KKGF4iT7WmpEtBDw7njd75WuaAFKzyW44"
+ * @property YOUR_BACKEND_URL This is where your backend is hosted.
+ */
+class DemoPasswordlessOptions {
+    companion object {
+        const val API_KEY = "personal:public:fef3b07e9022454cb72377b96d1ac329"
+        const val RP_ID = "990b-163-53-252-8.ngrok-free.app"
+        const val YOUR_BACKEND_URL = "https://990b-163-53-252-8.ngrok-free.app"
+        const val ORIGIN = "android:apk-key-hash:NX7853gQH6KKGF4iT7WmpEtBDw7njd75WuaAFKzyW44"
+        const val API_URL = "https://v4.passwordless.dev"
+    }
+}
+```
+2. Update Assetlinks File: Modify the assetlinks [file here](app/src/main/res/xml/assetlinks.xml)
+``` xml
+<resources>
+    <string name="assetlinks">https://yourexample.com/.well-known/assetlinks.json</string>
+</resources>
+```
+## Using SDK
+1. **Declare `PasswordlessClient`**: Establish a singleton `PasswordlessClient` object using the `PasswordlessOptions` class. Utilize the values from `DemoPasswordlessOptions`:
+``` kotlin
+    @Provides
+    @Singleton
+    fun providePasswordlessClient(): PasswordlessClient {
+        val options = PasswordlessOptions(
+            DemoPasswordlessOptions.API_KEY,
+            DemoPasswordlessOptions.RP_ID,
+            DemoPasswordlessOptions.ORIGIN,
+            DemoPasswordlessOptions.API_URL
+        )
+        return PasswordlessClient(options)
+    }
+```
+2. **Set the Context of PasswordlessClient**:Ensure the context is set to the current activity. Note that this must be an Activity context of the current activity.
+
+[MainActivity.kt](app/src/main/java/com/example/myapplication/MainActivity.kt)
+``` kotlin
+        /** Context needs to be set according to current activity
+         * If there are different activity handling register and signin,
+         * then call this on every activity
+         */
+
+        _passwordless.setContext(this)
+```
+3. **Set Coroutine Scope**: Set the coroutine scope, passing lifecycleScope of the current fragment.
+   
+[RegisterFragment.kt](app/src/main/java/com/example/myapplication/RegisterFragment.kt) , [LoginFragment.kt](app/src/main/java/com/example/myapplication/LoginFragment.kt)
+``` kotlin
+        //Scope needs to be updated according to current class
+        _passwordless
+            .setCoroutineScope(lifecycleScope)
+```
+### Register
+1. **Call Your Backend with User Details**:Make a call to your backend with user details (e.g., username, alias) and retrieve the registration token.
+2. **Call Passwordless Register Function**
+
+[RegisterFragment.kt](app/src/main/java/com/example/myapplication/RegisterFragment.kt)
+```kotlin
+_passwordless.register(
+    token =responseToken,
+    nickname = nickname
+) { success, exception, result ->
+        if (success) {
+            Toast.makeText(context, result.toString(), Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(
+            context,
+            "Exception: " + getPasskeyFailureMessage(exception as Exception),
+        Toast.LENGTH_SHORT
+        ).show()
+    }
+}
+```
+
+### Signin
+1. **Take Alias as Input**: Gather the alias as input from the user.
+2. **Call Passwordless Login**: Initiate the login process with the alias and response callback.
+
+[LoginFragment.kt](app/src/main/java/com/example/myapplication/LoginFragment.kt)
+```kotlin
+_passwordless.login(alias) { success, exception, result ->
+    if (success) {
+        lifecycleScope.launch {
+             val clientDataResponse =
+                httpClient.login(UserLoginRequest(result?.token!!))
+            if (clientDataResponse.isSuccessful) {
+                val data = clientDataResponse.body()
+                showText(data.toString())
+            }
+        }
+    } else {
+        showException(exception)
+    }
+}
+```
 ## Signup flow 
-![signup flow](https://github.com/shubhamji88/passwordless-android/assets/56815364/f7ce294f-68e6-4b61-844b-b3db7f9f17d5)
+![signup flow f](https://github.com/bitwarden/passwordless-android/assets/56815364/aea379de-aacb-4619-a650-41bf67f15d7d)
+
+## Signin flow
+![signin](https://github.com/bitwarden/passwordless-android/assets/56815364/2fa48f99-e412-4f1d-800f-d9109ba9ff4f)
+
 
 ## Help
 To talk to the passwordless team, send us an email at support@passwordless.dev
