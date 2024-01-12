@@ -118,7 +118,7 @@ class PasswordlessClient(
 
             val completeInputModel = LoginCompleteRequest(
                 session = beginResponseData.session,
-                response = PublicKeyCredentialConverter.convertJson(publicKeyCredential.authenticationResponseJson),
+                response = publicKeyCredential,
                 origin = _options.origin,
                 rpId = _options.rpId
             )
@@ -172,7 +172,7 @@ class PasswordlessClient(
 
             val completeRequest = RegisterCompleteRequest(
                 session = beginResult.session,
-                response = PublicKeyCredentialConverter.convertJson(response.registrationResponseJson),
+                response = response,
                 nickname = nickname,
                 origin = _options.origin,
                 rpId = _options.rpId
