@@ -11,7 +11,7 @@
     "schedule:weekends",
     ":separateMajorReleases"
   ],
-  "enabledManagers": ["cargo", "github-actions", "npm", "nuget"],
+  "enabledManagers": ["cargo", "github-actions", "maven"],
   "packageRules": [
     {
       "groupName": "cargo minor",
@@ -24,13 +24,8 @@
       "matchUpdateTypes": ["minor", "patch"]
     },
     {
-      "groupName": "npm minor",
-      "matchManagers": ["npm"],
-      "matchUpdateTypes": ["minor", "patch"]
-    },
-    {
-      "groupName": "nuget minor",
-      "matchManagers": ["nuget"],
+      "groupName": "maven minor",
+      "matchManagers": ["maven"],
       "matchUpdateTypes": ["minor", "patch"]
     }
   ]
