@@ -40,9 +40,7 @@ class LoginFragment : Fragment() {
     ): View {
 
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        //Scope needs to be updated according to current class
-        _passwordless
-            .setCoroutineScope(lifecycleScope)
+
         return binding.root
 
     }

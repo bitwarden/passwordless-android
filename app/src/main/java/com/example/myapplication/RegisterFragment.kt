@@ -38,9 +38,6 @@ class RegisterFragment : Fragment() {
     ): View {
 
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
-        //Scope needs to be updated according to current class
-        _passwordless
-            .setCoroutineScope(lifecycleScope)
 
         handleLoginNavigation()
         return binding.root
