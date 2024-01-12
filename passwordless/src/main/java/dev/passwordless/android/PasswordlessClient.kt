@@ -39,11 +39,25 @@ class PasswordlessClient(
     private lateinit var _coroutineScope: CoroutineScope
     private lateinit var credentialManager: CredentialManager
     private lateinit var _context: Context
+
+    /**
+     * Manages the communication with the Credential Manager API and performs registration operations for the Passwordless authentication flow.
+     *
+     * @param options The configuration options for Passwordless authentication.
+     * @param context The context of the activity.
+     */
+    constructor(options: PasswordlessOptions, context: Context) : this(options) {
+        setContext(context)
+    }
+
     fun setCoroutineScope(coroutineScope: CoroutineScope): PasswordlessClient =
         apply { _coroutineScope = coroutineScope }
 
     fun setContext(context: Context): PasswordlessClient =
         apply {
+            if (::_context.isInitialized) {
+                throw IllegalStateException("Context cannot be set more than once")
+            }
             _context = context
             credentialManager = CredentialManager.create(_context)
         }

@@ -24,12 +24,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var _passwordless: PasswordlessClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /** Context needs to be set according to current activity
-         * If there are different activity handling register and signin,
-         * then call this on every activity
-         */
-
-        _passwordless.setContext(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
