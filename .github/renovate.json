@@ -27,6 +27,11 @@
       "groupName": "maven minor",
       "matchManagers": ["maven"],
       "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "groupName": "gradle minor",
+      "matchManagers": ["gradle"],
+      "matchUpdateTypes": ["minor", "patch"]
     }
   ]
 }
