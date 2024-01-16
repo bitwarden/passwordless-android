@@ -11,13 +11,8 @@
     "schedule:weekends",
     ":separateMajorReleases"
   ],
-  "enabledManagers": ["cargo", "github-actions", "maven", "gradle"],
+  "enabledManagers": ["github-actions", "maven", "gradle"],
   "packageRules": [
-    {
-      "groupName": "cargo minor",
-      "matchManagers": ["cargo"],
-      "matchUpdateTypes": ["minor", "patch"]
-    },
     {
       "groupName": "gh minor",
       "matchManagers": ["github-actions"],
