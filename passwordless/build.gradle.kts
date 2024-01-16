@@ -46,7 +46,7 @@ dependencies {
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("org.mockito:mockito-core:2.1.0")
+    androidTestImplementation("org.mockito:mockito-core:5.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
     implementation("androidx.credentials:credentials:1.3.0-alpha01")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
