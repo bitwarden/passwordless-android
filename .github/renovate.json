@@ -10,7 +10,7 @@
     "schedule:weekends",
     ":separateMajorReleases"
   ],
-  "enabledManagers": ["github-actions", "maven", "gradle"],
+  "enabledManagers": ["github-actions", "maven", "gradle", "gradle-wrapper"],
   "packageRules": [
     {
       "groupName": "gh minor",
@@ -25,6 +25,11 @@
     {
       "groupName": "gradle minor",
       "matchManagers": ["gradle"],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "groupName": "gradle-wrapper minor",
+      "matchManagers": ["gradle-wrapper"],
       "matchUpdateTypes": ["minor", "patch"]
     }
   ]
