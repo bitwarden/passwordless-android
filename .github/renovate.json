@@ -11,7 +11,7 @@
     "schedule:weekends",
     ":separateMajorReleases"
   ],
-  "enabledManagers": ["cargo", "github-actions", "maven"],
+  "enabledManagers": ["cargo", "github-actions", "maven", "gradle"],
   "packageRules": [
     {
       "groupName": "cargo minor",
