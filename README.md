@@ -172,25 +172,6 @@ _passwordless.login(alias) { success, exception, result ->
 ## Signin flow
 ![signin](https://github.com/bitwarden/passwordless-android/assets/56815364/2fa48f99-e412-4f1d-800f-d9109ba9ff4f)
 
-
-## Screenshots
-
-
-
-### Registration
-
-![Registration #1](/screenshots/register_1.png)
-
-![Registration #2](/screenshots/register_2.png)
-
-### Login
-
-![Login #1](/screenshots/login_1.png)
-
-![Login #2](/screenshots/login_2.png)
-
-![Login #3](/screenshots/login_3.png)
-
 ## Help
 To talk to the passwordless team, send us an email at support@passwordless.dev
 
