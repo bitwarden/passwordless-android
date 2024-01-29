@@ -2,7 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
-    ":combinePatchMinorReleases",
     ":dependencyDashboard",
     ":maintainLockFilesWeekly",
     ":pinAllExceptPeerDependencies",
@@ -11,13 +10,8 @@
     "schedule:weekends",
     ":separateMajorReleases"
   ],
-  "enabledManagers": ["cargo", "github-actions", "maven"],
+  "enabledManagers": ["github-actions", "maven", "gradle", "gradle-wrapper"],
   "packageRules": [
-    {
-      "groupName": "cargo minor",
-      "matchManagers": ["cargo"],
-      "matchUpdateTypes": ["minor", "patch"]
-    },
     {
       "groupName": "gh minor",
       "matchManagers": ["github-actions"],
@@ -31,6 +25,11 @@
     {
       "groupName": "gradle minor",
       "matchManagers": ["gradle"],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "groupName": "gradle-wrapper minor",
+      "matchManagers": ["gradle-wrapper"],
       "matchUpdateTypes": ["minor", "patch"]
     }
   ]
