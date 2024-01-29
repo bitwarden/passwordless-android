@@ -62,7 +62,7 @@ Write-Output $base64String
  6. Run the app!
 
 ## Run the Example App
-1. **Setup `PasswordlessOptions` Class**: Begin by configuring the PasswordlessOptions class, as demonstrated in the [example](app/src/main/java/com/example/myapplication/services/yourbackend/config/DemoPasswordlessOptions.kt). Fill in the required parameters:
+1. **Setup `PasswordlessOptions` Class**: Begin by configuring the PasswordlessOptions class, as demonstrated in the [example](app/src/main/java/dev/passwordless/sampleapp/services/yourbackend/config/DemoPasswordlessOptions.kt). Fill in the required parameters:
 ``` kotlin
 /**
  * @property API_URL The Passwordless.dev server url.
@@ -106,7 +106,7 @@ class DemoPasswordlessOptions {
 ```
 2. **Set the Context of PasswordlessClient**:Ensure the context is set to the current activity. Note that this must be an Activity context of the current activity.
 
-[MainActivity.kt](app/src/main/java/com/example/myapplication/MainActivity.kt)
+[MainActivity.kt](app/src/main/java/dev/passwordless/sampleapp/MainActivity.kt)
 ``` kotlin
         /** Context needs to be set according to current activity
          * If there are different activity handling register and signin,
@@ -117,7 +117,7 @@ class DemoPasswordlessOptions {
 ```
 3. **Set Coroutine Scope**: Set the coroutine scope, passing lifecycleScope of the current fragment.
    
-[RegisterFragment.kt](app/src/main/java/com/example/myapplication/RegisterFragment.kt) , [LoginFragment.kt](app/src/main/java/com/example/myapplication/LoginFragment.kt)
+[RegisterFragment.kt](app/src/main/java/dev/passwordless/sampleapp/RegisterFragment.kt) , [LoginFragment.kt](app/src/main/java/dev/passwordless/sampleapp/LoginFragment.kt)
 ``` kotlin
         //Scope needs to be updated according to current class
         _passwordless
@@ -127,7 +127,7 @@ class DemoPasswordlessOptions {
 1. **Call Your Backend with User Details**:Make a call to your backend with user details (e.g., username, alias) and retrieve the registration token.
 2. **Call Passwordless Register Function**
 
-[RegisterFragment.kt](app/src/main/java/com/example/myapplication/RegisterFragment.kt)
+[RegisterFragment.kt](app/src/main/java/dev/passwordless/sampleapp/RegisterFragment.kt)
 ```kotlin
 _passwordless.register(
     token =responseToken,
@@ -149,7 +149,7 @@ _passwordless.register(
 1. **Take Alias as Input**: Gather the alias as input from the user.
 2. **Call Passwordless Login**: Initiate the login process with the alias and response callback.
 
-[LoginFragment.kt](app/src/main/java/com/example/myapplication/LoginFragment.kt)
+[LoginFragment.kt](app/src/main/java/dev/passwordless/sampleapp/LoginFragment.kt)
 ```kotlin
 _passwordless.login(alias) { success, exception, result ->
     if (success) {

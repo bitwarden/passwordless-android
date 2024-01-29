@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.myapplication"
+    namespace = "dev.passwordless.sampleapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.myapplication"
+        applicationId = "dev.passwordless.sampleapp"
         minSdk = 28
         targetSdk = 34
         versionCode = 1
