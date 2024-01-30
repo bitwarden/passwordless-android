@@ -22,12 +22,6 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - id: install-secret-key
-        name: Import GPG Secret Key
-        run: |
-          cat <(echo -e "${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEY }}") | gpg --batch --import
-          gpg --list-secret-keys --keyid-format LONG
-
       - run: ./gradlew publish
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.ORG_GRADLE_PROJECT_MAVENCENTRALUSERNAME }}
