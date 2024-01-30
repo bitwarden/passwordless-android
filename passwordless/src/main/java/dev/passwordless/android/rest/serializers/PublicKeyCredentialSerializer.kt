@@ -1,11 +1,12 @@
 package dev.passwordless.android.rest.serializers
 
-import androidx.credentials.CreatePublicKeyCredentialResponse
 import androidx.credentials.PublicKeyCredential
 import com.google.gson.JsonElement
+import com.google.gson.JsonParser
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
-import dev.passwordless.android.rest.converters.PublicKeyCredentialConverter
+import com.google.gson.stream.JsonReader
+import java.io.StringReader
 import java.lang.reflect.Type
 
 class PublicKeyCredentialSerializer :
@@ -15,6 +16,7 @@ class PublicKeyCredentialSerializer :
         typeOfSrc: Type?,
         context: JsonSerializationContext?
     ): JsonElement {
-        return PublicKeyCredentialConverter.convertJson(src.authenticationResponseJson)
+        val reader = JsonReader(StringReader(src.authenticationResponseJson));
+        return JsonParser.parseReader(reader)
     }
 }
