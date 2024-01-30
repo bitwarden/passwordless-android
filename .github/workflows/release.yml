@@ -8,6 +8,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - uses: actions/checkout@v4
@@ -21,12 +24,6 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-
-      - id: install-secret-key
-        name: Import GPG Secret Key
-        run: |
-          cat <(echo -e "${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEY }}") | gpg --batch --import
-          gpg --list-secret-keys --keyid-format LONG
 
       - run: ./gradlew publish
         env:
