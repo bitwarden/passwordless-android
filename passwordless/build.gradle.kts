@@ -36,7 +36,7 @@ android {
     }
 
     mavenPublishing {
-        coordinates("com.bitwarden", "passwordless-android", "0.0.3")
+        coordinates("com.bitwarden", "passwordless-android", "0.0.4")
         // publishToMavenCentral(SonatypeHost.DEFAULT)
         publishToMavenCentral(SonatypeHost.S01)
         signAllPublications()
