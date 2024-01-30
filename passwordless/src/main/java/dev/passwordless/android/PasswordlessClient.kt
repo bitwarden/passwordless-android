@@ -6,7 +6,6 @@ import androidx.credentials.CreatePublicKeyCredentialResponse
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.PublicKeyCredential
-import androidx.lifecycle.LifecycleCoroutineScope
 import dev.passwordless.android.rest.PasswordlessHttpClient
 import dev.passwordless.android.rest.PasswordlessHttpClientFactory
 import dev.passwordless.android.rest.PasswordlessOptions
@@ -18,7 +17,6 @@ import dev.passwordless.android.rest.contracts.register.RegisterBeginRequest
 import dev.passwordless.android.rest.contracts.register.RegisterBeginResponse
 import dev.passwordless.android.rest.contracts.register.RegisterCompleteRequest
 import dev.passwordless.android.rest.contracts.register.RegisterCompleteResponse
-import dev.passwordless.android.rest.converters.PublicKeyCredentialConverter
 import dev.passwordless.android.rest.exceptions.PasswordlessApiException
 import dev.passwordless.android.rest.exceptions.ProblemDetails
 import kotlinx.coroutines.CoroutineScope
@@ -128,7 +126,7 @@ class PasswordlessClient(
 
             onLoginResult(true, null, completeResponse.body()!!)
         } catch (e: Exception) {
-            Log.e("passwordless-login-begin", "Cannot initiate login request", e)
+            Log.e("bwp-login-begin", "Cannot initiate login request", e)
             withContext(Dispatchers.Main) {
                 onLoginResult(false, e, null)
             }
@@ -184,7 +182,7 @@ class PasswordlessClient(
                 onRegisterResult(true, null, registerCompleteResponse.body())
             }
         } catch (e: Exception) {
-            Log.e("passwordless-register-begin", "Cannot call registerRequest", e)
+            Log.e("bwp-register-begin", "Cannot call registerRequest", e)
             withContext(Dispatchers.Main) {
                 onRegisterResult(false, e, null)
             }
