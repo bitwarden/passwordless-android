@@ -1,18 +1,13 @@
 package dev.passwordless.android.rest.converters
 
-import java.util.Base64
+import android.util.Base64
 
 object Base64UrlConverter {
     private val regex = Regex("^[A-Za-z0-9_-]*$")
 
     fun convert(input: String): ByteArray {
-        return Base64.getUrlDecoder().decode(input)
+        return Base64.decode(input, Base64.URL_SAFE)
     }
-
-    fun convert(input: ByteArray): String {
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(input)
-    }
-
 
     /**
      * Checks if the input is a valid Base64 URL-encoded string.
