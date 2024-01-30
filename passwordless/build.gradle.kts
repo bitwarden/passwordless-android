@@ -1,6 +1,9 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("com.vanniktech.maven.publish") version "0.27.0"
 }
 
 android {
@@ -22,12 +25,49 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    mavenPublishing {
+        coordinates("com.bitwarden", "passwordless-android", "0.0.1")
+        // publishToMavenCentral(SonatypeHost.DEFAULT)
+        publishToMavenCentral(SonatypeHost.S01)
+        signAllPublications()
+
+        pom {
+            name.set("Passwordless Android Client SDK")
+            description.set("Passwordless Android Client SDK allows you to integrate Passwordless into your Android application.")
+            inceptionYear.set("2024")
+            url.set("https://www.github.com/bitwarden/passwordless-android/")
+            licenses {
+                license {
+                    name.set("The Apache License, Version 2.0")
+                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                }
+            }
+            developers {
+                developer {
+                    id.set("jonashendrickx")
+                    name.set("Jonas Hendrickx")
+                    organization.set("Bitwarden")
+                    organizationUrl.set("https://github.com/bitwarden")
+                    url.set("https://github.com/jonashendrickx")
+                }
+            }
+            scm {
+                url.set("https://github.com/bitwarden/passwordless-android")
+                connection.set("scm:git:git@github.com:passwordless/passwordless-android.git")
+                developerConnection.set("scm:git:git@github.com:bitwarden/passwordless-android.git")
+            }
+        }
     }
 }
 
