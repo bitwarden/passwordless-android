@@ -126,7 +126,7 @@ class PasswordlessClient(
 
             onLoginResult(true, null, completeResponse.body()!!)
         } catch (e: Exception) {
-            Log.e("passwordless-login-begin", "Cannot initiate login request", e)
+            Log.e("bwp-login-begin", "Cannot initiate login request", e)
             withContext(Dispatchers.Main) {
                 onLoginResult(false, e, null)
             }
@@ -182,7 +182,7 @@ class PasswordlessClient(
                 onRegisterResult(true, null, registerCompleteResponse.body())
             }
         } catch (e: Exception) {
-            Log.e("passwordless-register-begin", "Cannot call registerRequest", e)
+            Log.e("bwp-register-begin", "Cannot call registerRequest", e)
             withContext(Dispatchers.Main) {
                 onRegisterResult(false, e, null)
             }
