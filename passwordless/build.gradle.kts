@@ -1,3 +1,4 @@
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
@@ -36,7 +37,7 @@ android {
     }
 
     mavenPublishing {
-        coordinates("com.bitwarden", "passwordless-android", "0.0.10")
+        coordinates("com.bitwarden", "passwordless-android", "0.0.11")
         // publishToMavenCentral(SonatypeHost.DEFAULT)
         publishToMavenCentral(SonatypeHost.S01)
         signAllPublications()
@@ -68,6 +69,19 @@ android {
                 developerConnection.set("scm:git:git@github.com:bitwarden/passwordless-android.git")
             }
         }
+
+        configure(
+            AndroidSingleVariantLibrary(
+                // the published variant
+                variant = "release",
+
+                // whether to publish a sources jar
+                sourcesJar = false,
+
+                // whether to publish a javadoc jar
+                publishJavadocJar = true,
+            )
+        )
     }
 }
 
