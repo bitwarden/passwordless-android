@@ -1,3 +1,6 @@
+![Build](https://github.com/bitwarden/passwordless-android/actions/workflows/android.yml/badge.svg)
+[![Maven Central](https://img.shields.io/maven-central/v/com.bitwarden/passwordless-android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.bitwarden%22%20AND%20a:%22passwordless-android%22)
+
 # Android Client SDK
 
 The Passwordless.dev Android client SDK gives users the ability to leverage their device’s built-in fingerprint sensor and/or FIDO security keys for secure passwordless access to websites and native applications that support the FIDO2 protocols
@@ -46,19 +49,19 @@ In your `AndroidManifest.xml`, you will need to add the following permissions:
 
 ```kotlin
 data class PasswordlessOptions(
-   # Your public API key
+   // Your public API key
    val apiKey: String,
 
-   # Identifier for your server, for example 'example.com' if your backend is hosted at https://example.com.
+   // Identifier for your server, for example 'example.com' if your backend is hosted at https://example.com.
    val rpId: String,
 
-   # This is where your Facet ID goes
+   // This is where your Facet ID goes
    val origin: String,
 
-   # Where your backend is hosted
+   // Where your backend is hosted
    val backendUrl:String,
 
-   # Passwordless.dev server, change for self-hosting
+   // Passwordless.dev server, change for self-hosting
    val apiUrl: String = "https://v4.passwordless.dev"
 )
 ```
