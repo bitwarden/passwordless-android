@@ -12,7 +12,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 28
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -37,7 +37,7 @@ android {
     }
 
     mavenPublishing {
-        coordinates("com.bitwarden", "passwordless-android", "0.0.11")
+        coordinates("com.bitwarden", "passwordless-android", "1.0.1")
         // publishToMavenCentral(SonatypeHost.DEFAULT)
         publishToMavenCentral(SonatypeHost.S01)
         signAllPublications()
@@ -76,7 +76,7 @@ android {
                 variant = "release",
 
                 // whether to publish a sources jar
-                sourcesJar = false,
+                sourcesJar = true,
 
                 // whether to publish a javadoc jar
                 publishJavadocJar = true,
