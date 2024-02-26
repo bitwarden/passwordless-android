@@ -1,5 +1,6 @@
 package dev.passwordless.sampleapp
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,12 +8,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
-import dev.passwordless.sampleapp.databinding.FragmentLoginBinding
+import com.auth0.android.jwt.JWT
 import dagger.hilt.android.AndroidEntryPoint
 import dev.passwordless.android.PasswordlessClient
+import dev.passwordless.sampleapp.databinding.FragmentLoginBinding
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -57,7 +61,16 @@ class LoginFragment : Fragment() {
                                 httpClient.login(UserLoginRequest(result?.token!!))
                             if (clientDataResponse.isSuccessful) {
                                 val data = clientDataResponse.body()
-                                showText(data.toString())
+                                val jwt = JWT(data!!.jwtToken)
+                                if (jwt.isExpired(60)) {
+                                    Toast.makeText(
+                                        context,
+                                        "Token is expired. Please try again.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    findNavController().navigate(R.id.show_credentials)
+                                }
                             }
                         }
                     } else {
@@ -74,12 +87,8 @@ class LoginFragment : Fragment() {
             }
         }
         binding.registerNavTV.setOnClickListener {
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+            findNavController().navigate(R.id.action_to_registration_fragment)
         }
-    }
-
-    private fun showText(message: String) {
-        binding.clientDataTV.text = message
     }
 
     override fun onDestroyView() {

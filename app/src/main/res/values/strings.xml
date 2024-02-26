@@ -5,6 +5,7 @@
     <!-- Strings used for fragments for navigation -->
     <string name="register_fragment_label">Registration</string>
     <string name="login_fragment_label">Login</string>
+    <string name="credentials_fragment_label">Credentials</string>
     <string name="register">Register</string>
     <string name="previous">Previous</string>
 

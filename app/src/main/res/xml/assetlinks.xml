@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="assetlinks">https://yourbackend.com/.well-known/assetlinks.json</string>
+    <string name="assetlinks">https://pwdemo.lesspassword.dev/.well-known/assetlinks.json</string>
 </resources>

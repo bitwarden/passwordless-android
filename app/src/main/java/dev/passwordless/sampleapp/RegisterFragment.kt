@@ -43,7 +43,7 @@ class RegisterFragment : Fragment() {
 
     private fun handleLoginNavigation() {
         binding.loginTV.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            findNavController().navigate(R.id.action_to_login_fragment)
         }
     }
 

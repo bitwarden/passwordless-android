@@ -4,10 +4,9 @@ import retrofit2.*
 import retrofit2.http.*
 
 interface YourBackendHttpClient {
-    @POST("/users/register")
-    @Headers("X-Pinggy-No-Screen:true")
+    @POST("/auth/register")
     suspend fun register(@Body request: UserRegisterRequest): Response<RegisterTokenResponse>
 
-    @POST("/users/login")
+    @POST("/auth/login")
     suspend fun login(@Body request: UserLoginRequest): Response<VerifiedUserResponse>
 }

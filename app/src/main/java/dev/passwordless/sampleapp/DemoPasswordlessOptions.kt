@@ -11,8 +11,8 @@ package dev.passwordless.sampleapp
 class DemoPasswordlessOptions {
     companion object {
         const val API_KEY = "jonasapp1:public:a13666586ea448958c38cdec76eaaace"
-        const val RP_ID = "yourbackend.com"
-        const val YOUR_BACKEND_URL = "https://yourbackend.com"
+        const val RP_ID = "pwdemo.lesspassword.dev"
+        const val YOUR_BACKEND_URL = "https://pwdemo.lesspassword.dev"
         const val ORIGIN = "android:apk-key-hash:POIplOLeHuvl-XAQckH0DwY4Yb1ydnnKcmhn-jibZbk"
         const val API_URL = "https://v4.passwordless.dev"
     }

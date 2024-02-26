@@ -38,10 +38,5 @@
             android:text="@string/don_t_have_an_account_register"
             android:theme="@style/LinkTextViewStyle" />
 
-        <TextView
-            android:id="@+id/clientDataTV"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

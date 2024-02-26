@@ -46,6 +46,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.auth0.android:jwtdecode:2.0.2")
     implementation(project(mapOf("path" to ":passwordless")))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
