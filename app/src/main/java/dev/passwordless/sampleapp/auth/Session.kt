@@ -1,19 +1,29 @@
 package dev.passwordless.sampleapp.auth
 
+import android.content.Context
+import androidx.preference.PreferenceManager
 import com.auth0.android.jwt.JWT
 
-data class Session(val jwt: String?) {
-    lateinit var jwtToken: JWT
-    lateinit var userId: String
-
-    init {
-        if (jwt != null) {
-            jwtToken = JWT(jwt)
-            userId = jwtToken.getClaim("nameid").asString()!!
-        }
+data class Session(val context: Context) {
+    fun isLoggedIn(): Boolean {
+        return getJwt() != null
     }
 
-    fun isLoggedIn(): Boolean {
-        return jwt != null
+    fun getUserId(): String? {
+        val jwt = getJwt()
+        return jwt?.getClaim("nameid")?.asString() ?: null
+    }
+
+    fun getJwtString(): String? {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString("jwt", null)
+    }
+
+    fun getJwt(): JWT? {
+        val jwt = getJwtString()
+        if (jwt == null) {
+            return null
+        } else {
+            return JWT(jwt)
+        }
     }
 }

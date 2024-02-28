@@ -20,8 +20,8 @@ object YourBackendHttpClientFactory {
         val clientBuilder = OkHttpClient.Builder()
             .addInterceptor(okHttpLogger)
 
-        if (session.jwt != null) {
-            clientBuilder.addInterceptor(AuthorizationInterceptor(session.jwt!!))
+        if (session.isLoggedIn()) {
+            clientBuilder.addInterceptor(AuthorizationInterceptor(session.getJwtString()!!))
         }
 
         val client = clientBuilder.build()

@@ -52,8 +52,6 @@ class ActivityModule {
     @Provides
     @ActivityScoped
     fun provideSession(@ActivityContext activity: Context): Session {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity!!.applicationContext)
-        val jwt = sharedPreferences.getString("jwt", null)
-        return Session(jwt)
+        return Session(activity!!.applicationContext)
     }
 }

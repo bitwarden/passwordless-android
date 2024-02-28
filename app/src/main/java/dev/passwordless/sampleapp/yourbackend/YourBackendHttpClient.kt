@@ -16,5 +16,5 @@ interface YourBackendHttpClient {
     suspend fun login(@Body request: UserLoginRequest): Response<VerifiedUserResponse>
 
     @GET("/users/{userId}/credentials")
-    suspend fun getCredentials(@Path("userId") userId: String): Response<CredentialResponse>
+    suspend fun getCredentials(@Path("userId") userId: String): Response<List<CredentialResponse>>
 }

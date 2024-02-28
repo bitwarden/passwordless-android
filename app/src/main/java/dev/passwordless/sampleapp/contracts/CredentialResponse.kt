@@ -1,5 +1,7 @@
 package dev.passwordless.sampleapp.contracts
 
+import java.time.LocalDateTime
+
 data class CredentialResponse (
     val descriptor: CredentialDescriptor,
     val publicKey: String,
