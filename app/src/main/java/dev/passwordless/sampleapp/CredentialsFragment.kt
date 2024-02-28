@@ -11,7 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.passwordless.android.PasswordlessClient
+import dev.passwordless.android.utils.PasswordlessUtils
 import dev.passwordless.sampleapp.auth.Session
+import dev.passwordless.sampleapp.contracts.UserRegisterRequest
 import dev.passwordless.sampleapp.databinding.FragmentCredentialsBinding
 import dev.passwordless.sampleapp.yourbackend.YourBackendHttpClient
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +24,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CredentialsFragment : Fragment() {
     @Inject lateinit var httpClient: YourBackendHttpClient
-    @Inject lateinit var _session: Session
+    @Inject lateinit var session: Session
+    @Inject lateinit var passwordless: PasswordlessClient
 
     private var _binding: FragmentCredentialsBinding? = null
     private val binding get() = _binding!!
@@ -37,7 +40,7 @@ class CredentialsFragment : Fragment() {
 
         lifecycleScope.launch {
             val credentialsResponse = withContext(Dispatchers.IO) {
-                httpClient.getCredentials(_session.getUserId()!!)
+                httpClient.getCredentials(session.getUserId()!!)
             }
 
             if (credentialsResponse.isSuccessful) {
@@ -47,7 +50,7 @@ class CredentialsFragment : Fragment() {
             }
         }
 
-        if (!_session.isLoggedIn()) {
+        if (!session.isLoggedIn()) {
             findNavController().navigate(R.id.action_to_login_fragment)
         }
 
@@ -56,6 +59,32 @@ class CredentialsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.buttonRegister.setOnClickListener {
+            lifecycleScope.launch {
+                val alias = binding.aliasEditText.text.toString()
+                val username = session.getUsername()!!
+                try {
+                    val response = httpClient.register(UserRegisterRequest(username, alias)).body()?.token!!
+                    passwordless.register(
+                        response,
+                        alias + username
+                    ) { success, exception, result ->
+                        if (success) {
+                            findNavController().navigate(R.id.credentials_fragment)
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Exception: " + PasswordlessUtils.getPasskeyFailureMessage(exception as Exception),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(context, e.message.toString(), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

@@ -10,8 +10,11 @@ data class Session(val context: Context) {
     }
 
     fun getUserId(): String? {
-        val jwt = getJwt()
-        return jwt?.getClaim("nameid")?.asString() ?: null
+        return getJwt()?.getClaim("nameid")?.asString() ?: null
+    }
+
+    fun getUsername(): String? {
+        return getJwt()?.getClaim("unique_name")?.asString() ?: null
     }
 
     fun getJwtString(): String? {
