@@ -26,4 +26,9 @@ data class Session(val context: Context) {
             return JWT(jwt)
         }
     }
+
+    fun isExpired(): Boolean {
+        val jwt = getJwt() ?: return true
+        return jwt.isExpired(0);
+    }
 }
