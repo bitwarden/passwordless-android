@@ -1,6 +1,5 @@
 package dev.passwordless.sampleapp
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,12 +7,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import com.auth0.android.jwt.JWT
 import dagger.hilt.android.AndroidEntryPoint
 import dev.passwordless.android.PasswordlessClient
+import dev.passwordless.sampleapp.auth.Session
+import dev.passwordless.sampleapp.auth.SessionImpl
+import dev.passwordless.sampleapp.contracts.UserLoginRequest
 import dev.passwordless.sampleapp.databinding.FragmentLoginBinding
+import dev.passwordless.sampleapp.yourbackend.YourBackendHttpClient
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,6 +33,9 @@ class LoginFragment : Fragment() {
 
     @Inject
     lateinit var httpClient: YourBackendHttpClient
+
+    @Inject
+    lateinit var session: Session
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -69,6 +74,7 @@ class LoginFragment : Fragment() {
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 } else {
+                                    session = SessionImpl(data.jwtToken)
                                     findNavController().navigate(R.id.show_credentials)
                                 }
                             }

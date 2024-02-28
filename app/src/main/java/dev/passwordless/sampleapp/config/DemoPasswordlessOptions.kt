@@ -1,4 +1,4 @@
-package dev.passwordless.sampleapp
+package dev.passwordless.sampleapp.config
 /**
  * @property API_URL The Passwordless.dev server url.
  * @property API_KEY Your public API key.

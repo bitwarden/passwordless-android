@@ -1,4 +1,4 @@
-package dev.passwordless.sampleapp
+package dev.passwordless.sampleapp.di
 
 import android.app.Activity
 import android.content.Context
@@ -13,10 +13,11 @@ import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import dev.passwordless.android.PasswordlessClient
 import dev.passwordless.android.rest.PasswordlessOptions
+import dev.passwordless.sampleapp.config.DemoPasswordlessOptions
 
 @Module
 @InstallIn(ActivityComponent::class)
-class AppModule {
+class ActivityModule {
     @Provides
     fun provideLifecycleCoroutineScope(activity: Activity): LifecycleCoroutineScope =
         (activity as AppCompatActivity).lifecycleScope
@@ -25,7 +26,8 @@ class AppModule {
     @Provides
     @ActivityScoped
     fun providePasswordlessClient(
-        @ActivityContext activity: Context, scope: LifecycleCoroutineScope): PasswordlessClient {
+        @ActivityContext activity: Context, scope: LifecycleCoroutineScope
+    ): PasswordlessClient {
         val options = PasswordlessOptions(
             DemoPasswordlessOptions.API_KEY,
             DemoPasswordlessOptions.RP_ID,
@@ -35,9 +37,4 @@ class AppModule {
 
         return PasswordlessClient(options, activity, scope)
     }
-
-    @Provides
-    @ActivityScoped
-    fun provideRetrofitClient() =
-        YourBackendHttpClientFactory.create(DemoPasswordlessOptions.YOUR_BACKEND_URL)
 }

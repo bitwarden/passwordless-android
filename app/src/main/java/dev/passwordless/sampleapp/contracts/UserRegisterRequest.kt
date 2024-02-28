@@ -1,4 +1,4 @@
-package dev.passwordless.sampleapp
+package dev.passwordless.sampleapp.contracts
 
 data class UserRegisterRequest(
     val username:String,

@@ -12,6 +12,8 @@ import dev.passwordless.sampleapp.databinding.FragmentRegisterBinding
 import dagger.hilt.android.AndroidEntryPoint
 import dev.passwordless.android.PasswordlessClient
 import dev.passwordless.android.utils.PasswordlessUtils.Companion.getPasskeyFailureMessage
+import dev.passwordless.sampleapp.contracts.UserRegisterRequest
+import dev.passwordless.sampleapp.yourbackend.YourBackendHttpClient
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
