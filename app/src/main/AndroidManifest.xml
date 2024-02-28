@@ -26,11 +26,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="dev.passwordless.sampleapp.CredentialsActivity"
-            android:exported="false">
-        </activity>
-
         <!-- Digital Asset Links -->
         <meta-data
             android:name="asset_statements"

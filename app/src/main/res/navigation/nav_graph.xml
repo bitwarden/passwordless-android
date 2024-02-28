@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph_main"
+    android:id="@+id/nav_graph"
     app:startDestination="@id/registration_fragment">
 
     <fragment
@@ -25,11 +25,18 @@
             android:id="@+id/action_to_registration_fragment"
             app:destination="@id/registration_fragment" />
 
+        <action
+            android:id="@+id/action_login_to_credentials_fragment"
+            app:destination="@id/credentials_fragment" />
     </fragment>
+    <fragment
+        android:id="@+id/credentials_fragment"
+        android:name="dev.passwordless.sampleapp.CredentialsFragment"
+        android:label="@string/credentials_fragment_label"
+        tools:layout="@layout/fragment_credentials">
 
-    <action
-        android:id="@+id/show_credentials"
-        app:destination="@id/nav_graph_credentials" />
-
-    <include app:graph="@navigation/nav_graph_credentials" />
+        <action
+            android:id="@+id/action_to_login_fragment"
+            app:destination="@id/login_fragment" />
+    </fragment>
 </navigation>

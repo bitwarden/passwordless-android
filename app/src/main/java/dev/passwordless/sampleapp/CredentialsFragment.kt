@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.passwordless.android.PasswordlessClient
 import dev.passwordless.sampleapp.auth.Session
@@ -35,7 +36,7 @@ class CredentialsFragment : Fragment() {
         _binding = FragmentCredentialsBinding.inflate(inflater, container, false)
 
         if (!_session.isLoggedIn()) {
-            // navigate to home
+            findNavController().navigate(R.id.action_to_login_fragment)
         }
 
         return binding.root
