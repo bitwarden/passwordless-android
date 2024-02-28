@@ -26,22 +26,14 @@ class CredentialsFragment : Fragment() {
 
     private var _binding: FragmentCredentialsBinding? = null
     private val binding get() = _binding!!
+    lateinit var listView: ListView
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCredentialsBinding.inflate(inflater, container, false)
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        if (!_session.isLoggedIn() || _session.isExpired()) {
-            findNavController().navigate(R.id.action_to_login_fragment)
-        }
 
         lifecycleScope.launch {
             val credentialsResponse = withContext(Dispatchers.IO) {
@@ -54,6 +46,16 @@ class CredentialsFragment : Fragment() {
                 Toast.makeText(context, credentialsResponse.message(), Toast.LENGTH_SHORT).show()
             }
         }
+
+        if (!_session.isLoggedIn()) {
+            findNavController().navigate(R.id.action_to_login_fragment)
+        }
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDestroyView() {
