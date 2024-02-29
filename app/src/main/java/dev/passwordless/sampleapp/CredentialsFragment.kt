@@ -4,49 +4,57 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import dev.passwordless.sampleapp.databinding.FragmentRegisterBinding
 import dagger.hilt.android.AndroidEntryPoint
 import dev.passwordless.android.PasswordlessClient
-import dev.passwordless.android.utils.PasswordlessUtils.Companion.getPasskeyFailureMessage
+import dev.passwordless.android.utils.PasswordlessUtils
+import dev.passwordless.sampleapp.auth.Session
 import dev.passwordless.sampleapp.contracts.UserRegisterRequest
+import dev.passwordless.sampleapp.databinding.FragmentCredentialsBinding
 import dev.passwordless.sampleapp.yourbackend.YourBackendHttpClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RegisterFragment : Fragment() {
+class CredentialsFragment : Fragment() {
+    @Inject lateinit var httpClient: YourBackendHttpClient
+    @Inject lateinit var session: Session
+    @Inject lateinit var passwordless: PasswordlessClient
 
-    private var _binding: FragmentRegisterBinding? = null
-
-    @Inject
-    lateinit var _passwordless: PasswordlessClient
-
-    @Inject
-    lateinit var httpClient: YourBackendHttpClient
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private var _binding: FragmentCredentialsBinding? = null
     private val binding get() = _binding!!
+    lateinit var listView: ListView
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        _binding = FragmentCredentialsBinding.inflate(inflater, container, false)
 
-        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        lifecycleScope.launch {
+            val credentialsResponse = withContext(Dispatchers.IO) {
+                httpClient.getCredentials(session.getUserId()!!)
+            }
 
-        handleLoginNavigation()
-        return binding.root
-    }
+            if (credentialsResponse.isSuccessful) {
+                binding.credentialsList.adapter = CredentialAdapter(requireContext(), credentialsResponse.body()!!)
+            } else {
+                Toast.makeText(context, credentialsResponse.message(), Toast.LENGTH_SHORT).show()
+            }
+        }
 
-    private fun handleLoginNavigation() {
-        binding.loginTV.setOnClickListener {
+        if (!session.isLoggedIn()) {
             findNavController().navigate(R.id.action_to_login_fragment)
         }
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,26 +63,25 @@ class RegisterFragment : Fragment() {
         binding.buttonRegister.setOnClickListener {
             lifecycleScope.launch {
                 val alias = binding.aliasEditText.text.toString()
-                val username = binding.usernameEditText.text.toString()
+                val username = session.getUsername()!!
                 try {
-                    val responseToken =
-                        httpClient.register(UserRegisterRequest(username, alias)).body()?.token!!
-                    _passwordless.register(
-                        responseToken,
+                    val response = httpClient.register(UserRegisterRequest(username, alias)).body()?.token!!
+                    passwordless.register(
+                        response,
                         alias + username
                     ) { success, exception, result ->
                         if (success) {
-                            Toast.makeText(context, result.toString(), Toast.LENGTH_SHORT).show()
+                            findNavController().navigate(R.id.credentials_fragment)
                         } else {
                             Toast.makeText(
                                 context,
-                                "Exception: " + getPasskeyFailureMessage(exception as Exception),
+                                "Exception: " + PasswordlessUtils.getPasskeyFailureMessage(exception as Exception),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, e.message.toString(), Toast.LENGTH_LONG).show()
                 }
             }
         }
