@@ -1,6 +1,7 @@
 package dev.passwordless.sampleapp
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import dev.passwordless.android.PasswordlessClient
 import dev.passwordless.sampleapp.contracts.UserLoginRequest
 import dev.passwordless.sampleapp.databinding.FragmentLoginBinding
 import dev.passwordless.sampleapp.yourbackend.YourBackendHttpClient
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,6 +35,14 @@ class LoginFragment : Fragment() {
 
     @Inject
     lateinit var httpClient: YourBackendHttpClient
+
+    private val mPreferenceListener: SharedPreferences.OnSharedPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+        if (key == "jwt") {
+            if (sharedPreferences.getString("jwt", null) != null) {
+                findNavController().navigate(R.id.action_login_to_credentials_fragment)
+            }
+        }
+    }
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -71,12 +81,17 @@ class LoginFragment : Fragment() {
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 } else {
-                                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireActivity()!!.applicationContext)
+                                    val sharedPreferences =
+                                        PreferenceManager.getDefaultSharedPreferences(
+                                            requireActivity()!!.applicationContext
+                                        )
+
+                                    sharedPreferences.registerOnSharedPreferenceChangeListener(mPreferenceListener)
+
                                     val editor = sharedPreferences.edit()
                                     editor.putString("jwt", data.jwtToken)
                                     editor.putString("userId", jwt.getClaim("nameid").asString())
                                     editor.commit()
-                                    findNavController().navigate(R.id.action_login_to_credentials_fragment)
                                 }
                             }
                         }
@@ -100,6 +115,8 @@ class LoginFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        PreferenceManager.getDefaultSharedPreferences(requireActivity().applicationContext)
+            .unregisterOnSharedPreferenceChangeListener(mPreferenceListener)
         _binding = null
     }
 }
