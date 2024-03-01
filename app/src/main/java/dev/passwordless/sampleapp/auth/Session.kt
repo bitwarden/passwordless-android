@@ -6,7 +6,7 @@ import com.auth0.android.jwt.JWT
 
 data class Session(val context: Context) {
     fun isLoggedIn(): Boolean {
-        return getJwt() != null
+        return getJwt() != null && !getJwt()!!.isExpired(60)
     }
 
     fun getUserId(): String? {
@@ -21,7 +21,7 @@ data class Session(val context: Context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString("jwt", null)
     }
 
-    fun getJwt(): JWT? {
+    private fun getJwt(): JWT? {
         val jwt = getJwtString()
         if (jwt == null) {
             return null

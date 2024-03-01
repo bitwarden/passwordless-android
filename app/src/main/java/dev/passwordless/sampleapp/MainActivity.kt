@@ -8,6 +8,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.preference.PreferenceManager
 import dev.passwordless.sampleapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import dev.passwordless.android.PasswordlessClient
@@ -53,5 +54,10 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
+    }
+
+    override fun onDestroy() {
+        PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().clear().commit()
+        super.onDestroy()
     }
 }
