@@ -1,4 +1,4 @@
-package dev.passwordless.sampleapp
+package dev.passwordless.sampleapp;
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,45 +8,39 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import dev.passwordless.sampleapp.databinding.FragmentRegisterBinding
 import dagger.hilt.android.AndroidEntryPoint
 import dev.passwordless.android.PasswordlessClient
-import dev.passwordless.android.utils.PasswordlessUtils.Companion.getPasskeyFailureMessage
+import dev.passwordless.android.utils.PasswordlessUtils
+import dev.passwordless.sampleapp.auth.Session
 import dev.passwordless.sampleapp.contracts.UserRegisterRequest
+import dev.passwordless.sampleapp.databinding.FragmentAddCredentialBinding
 import dev.passwordless.sampleapp.yourbackend.YourBackendHttpClient
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RegisterFragment : Fragment() {
-
-    private var _binding: FragmentRegisterBinding? = null
-
-    @Inject
-    lateinit var _passwordless: PasswordlessClient
-
+class AddCredentialFragment : Fragment() {
     @Inject
     lateinit var httpClient: YourBackendHttpClient
+    @Inject
+    lateinit var session: Session
+    @Inject
+    lateinit var passwordless: PasswordlessClient
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private var _binding: FragmentAddCredentialBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        _binding = FragmentAddCredentialBinding.inflate(inflater, container, false)
 
-        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
-
-        handleLoginNavigation()
-        return binding.root
-    }
-
-    private fun handleLoginNavigation() {
-        binding.loginTV.setOnClickListener {
-            findNavController().navigate(R.id.action_registration_to_login_fragment)
+        if (!session.isLoggedIn()) {
+            findNavController().navigate(R.id.action_add_credential_to_login_fragment)
         }
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,26 +49,26 @@ class RegisterFragment : Fragment() {
         binding.buttonRegister.setOnClickListener {
             lifecycleScope.launch {
                 val alias = binding.aliasEditText.text.toString()
-                val username = binding.usernameEditText.text.toString()
+                val username = session.getUsername()!!
                 try {
-                    val responseToken =
+                    val response =
                         httpClient.register(UserRegisterRequest(username, alias)).body()?.token!!
-                    _passwordless.register(
-                        responseToken,
+                    passwordless.register(
+                        response,
                         alias + username
                     ) { success, exception, result ->
                         if (success) {
-                            Toast.makeText(context, result.toString(), Toast.LENGTH_SHORT).show()
+                            findNavController().navigate(R.id.action_add_credential_to_credentials_fragment)
                         } else {
                             Toast.makeText(
                                 context,
-                                "Exception: " + getPasskeyFailureMessage(exception as Exception),
+                                "Exception: " + PasswordlessUtils.getPasskeyFailureMessage(exception as Exception),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, e.message.toString(), Toast.LENGTH_LONG).show()
                 }
             }
         }
