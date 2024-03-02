@@ -109,7 +109,7 @@ class LoginFragment : Fragment() {
             }
         }
         binding.registerNavTV.setOnClickListener {
-            findNavController().navigate(R.id.action_to_registration_fragment)
+            findNavController().navigate(R.id.action_login_to_registration_fragment)
         }
     }
 
