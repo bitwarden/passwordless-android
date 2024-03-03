@@ -1,12 +1,10 @@
 package dev.passwordless.sampleapp
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -14,13 +12,13 @@ import androidx.preference.PreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 import dev.passwordless.sampleapp.databinding.ActivityMainBinding
 
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -31,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+        navController.enableOnBackPressed(false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -68,25 +67,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val backPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            val navController = findNavController(R.id.nav_host_fragment_content)
-            val anonymousFragments = arrayOf(R.id.registration_fragment, R.id.login_fragment)
-
-            // Check if current and previous fragments are anonymous
-            if (anonymousFragments.contains(navController.currentDestination!!.id)) {
-                // Handle back press for anonymous fragments (e.g., display confirmation dialog)
-                // You can also use `super.onBackPressed()` here if needed
-            } else {
-                // Allow default back navigation for other fragments
-                navController.navigateUp()
-            }
-        }
-    }
-
     override fun onDestroy() {
         PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().clear().commit()
-        backPressedCallback.remove()
         super.onDestroy()
     }
 }
