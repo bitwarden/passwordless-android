@@ -3,16 +3,17 @@ package dev.passwordless.sampleapp
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.preference.PreferenceManager
-import dev.passwordless.sampleapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
-import dev.passwordless.android.PasswordlessClient
-import javax.inject.Inject
+import dev.passwordless.sampleapp.databinding.ActivityMainBinding
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -20,8 +21,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
-    @Inject
-    lateinit var _passwordless: PasswordlessClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,12 +51,42 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+        val anonymousFragments = arrayOf(R.id.registration_fragment, R.id.login_fragment)
+
+        if (anonymousFragments.contains(navController.previousBackStackEntry!!.destination.id) &&
+            anonymousFragments.contains(navController.currentBackStackEntry!!.destination.id)
+        ) {
+            navController.navigateUp()
+            return true
+        } else if (!anonymousFragments.contains(navController.previousBackStackEntry!!.destination.id) &&
+            !anonymousFragments.contains(navController.currentBackStackEntry!!.destination.id)
+        ) {
+            navController.navigateUp()
+            return true
+        } else {
+            return true
+        }
+    }
+
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val navController = findNavController(R.id.nav_host_fragment_content)
+            val anonymousFragments = arrayOf(R.id.registration_fragment, R.id.login_fragment)
+
+            // Check if current and previous fragments are anonymous
+            if (anonymousFragments.contains(navController.currentDestination!!.id)) {
+                // Handle back press for anonymous fragments (e.g., display confirmation dialog)
+                // You can also use `super.onBackPressed()` here if needed
+            } else {
+                // Allow default back navigation for other fragments
+                navController.navigateUp()
+            }
+        }
     }
 
     override fun onDestroy() {
         PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().clear().commit()
+        backPressedCallback.remove()
         super.onDestroy()
     }
 }
