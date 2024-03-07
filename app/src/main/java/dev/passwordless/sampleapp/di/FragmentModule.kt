@@ -5,31 +5,29 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.qualifiers.ActivityContext
-import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.android.scopes.FragmentScoped
 import dev.passwordless.android.PasswordlessClient
 import dev.passwordless.android.rest.PasswordlessOptions
 import dev.passwordless.sampleapp.auth.Session
 import dev.passwordless.sampleapp.config.DemoPasswordlessOptions
 import dev.passwordless.sampleapp.yourbackend.YourBackendHttpClient
 import dev.passwordless.sampleapp.yourbackend.YourBackendHttpClientFactory
-import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityComponent::class)
-class ActivityModule {
+@InstallIn(FragmentComponent::class)
+class FragmentModule {
     @Provides
     fun provideLifecycleCoroutineScope(activity: Activity): LifecycleCoroutineScope =
         (activity as AppCompatActivity).lifecycleScope
 
 
     @Provides
-    @ActivityScoped
+    @FragmentScoped
     fun providePasswordlessClient(
         @ActivityContext activity: Context, scope: LifecycleCoroutineScope
     ): PasswordlessClient {
@@ -44,13 +42,13 @@ class ActivityModule {
     }
 
     @Provides
-    @ActivityScoped
+    @FragmentScoped
     fun provideRetrofitClient(session: Session): YourBackendHttpClient {
         return YourBackendHttpClientFactory.create(DemoPasswordlessOptions.YOUR_BACKEND_URL, session)
     }
 
     @Provides
-    @ActivityScoped
+    @FragmentScoped
     fun provideSession(@ActivityContext activity: Context): Session {
         return Session(activity!!.applicationContext)
     }

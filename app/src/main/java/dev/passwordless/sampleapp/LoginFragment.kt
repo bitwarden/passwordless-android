@@ -1,5 +1,6 @@
 package dev.passwordless.sampleapp
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ import androidx.preference.PreferenceManager
 import com.auth0.android.jwt.JWT
 import dagger.hilt.android.AndroidEntryPoint
 import dev.passwordless.android.PasswordlessClient
+import dev.passwordless.sampleapp.auth.Session
 import dev.passwordless.sampleapp.contracts.UserLoginRequest
 import dev.passwordless.sampleapp.databinding.FragmentLoginBinding
 import dev.passwordless.sampleapp.yourbackend.YourBackendHttpClient
@@ -31,22 +33,12 @@ class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
 
-    @Inject
-    lateinit var _passwordless: PasswordlessClient
+    @Inject lateinit var _passwordless: PasswordlessClient
 
-    @Inject
-    lateinit var httpClient: YourBackendHttpClient
+    @Inject lateinit var httpClient: YourBackendHttpClient
 
-    private val mPreferenceListener: SharedPreferences.OnSharedPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-        if (key == "jwt") {
-            if (sharedPreferences.getString("jwt", null) != null) {
-                findNavController().navigate(R.id.action_login_to_credentials_fragment)
-            }
-        }
-    }
+    @Inject lateinit var session: Session
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -91,17 +83,8 @@ class LoginFragment : Fragment() {
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 } else {
-                                    val sharedPreferences =
-                                        PreferenceManager.getDefaultSharedPreferences(
-                                            requireActivity()!!.applicationContext
-                                        )
-
-                                    sharedPreferences.registerOnSharedPreferenceChangeListener(mPreferenceListener)
-
-                                    val editor = sharedPreferences.edit()
-                                    editor.putString("jwt", data.jwtToken)
-                                    editor.putString("userId", jwt.getClaim("nameid").asString())
-                                    editor.commit()
+                                    session.setJwtString(data.jwtToken)
+                                    findNavController().navigate(R.id.action_login_to_credentials_fragment)
                                 }
                             }
                         }
@@ -125,8 +108,6 @@ class LoginFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        PreferenceManager.getDefaultSharedPreferences(requireActivity().applicationContext)
-            .unregisterOnSharedPreferenceChangeListener(mPreferenceListener)
         _binding = null
     }
 }
