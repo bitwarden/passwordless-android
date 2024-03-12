@@ -12,13 +12,23 @@ android {
     compileSdk = 34
 
     defaultConfig {
+        version = "1.0.2"
         minSdk = 28
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
+        debug {
+            buildConfigField("String", "VERSION_NAME", "\"${project.version}\"")
+        }
+
         release {
+            buildConfigField("String", "VERSION_NAME", "\"${project.version}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -37,7 +47,7 @@ android {
     }
 
     mavenPublishing {
-        coordinates("com.bitwarden", "passwordless-android", "1.0.1")
+        coordinates("com.bitwarden", "passwordless-android", project.version.toString())
         // publishToMavenCentral(SonatypeHost.DEFAULT)
         publishToMavenCentral(SonatypeHost.S01)
         signAllPublications()
