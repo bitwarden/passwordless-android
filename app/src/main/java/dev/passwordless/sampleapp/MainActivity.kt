@@ -1,18 +1,16 @@
 package dev.passwordless.sampleapp
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.preference.PreferenceManager
-import dev.passwordless.sampleapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
-import dev.passwordless.android.PasswordlessClient
-import javax.inject.Inject
+import dev.passwordless.sampleapp.databinding.ActivityMainBinding
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -20,8 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
-    @Inject
-    lateinit var _passwordless: PasswordlessClient
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -32,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+        navController.enableOnBackPressed(false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -52,8 +50,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+        val anonymousFragments = arrayOf(R.id.registration_fragment, R.id.login_fragment)
+
+        if (anonymousFragments.contains(navController.previousBackStackEntry!!.destination.id) &&
+            anonymousFragments.contains(navController.currentBackStackEntry!!.destination.id)
+        ) {
+            navController.navigateUp()
+            return true
+        } else if (!anonymousFragments.contains(navController.previousBackStackEntry!!.destination.id) &&
+            !anonymousFragments.contains(navController.currentBackStackEntry!!.destination.id)
+        ) {
+            navController.navigateUp()
+            return true
+        } else {
+            return true
+        }
     }
 
     override fun onDestroy() {
