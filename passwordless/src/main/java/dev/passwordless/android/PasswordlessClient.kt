@@ -54,6 +54,13 @@ class PasswordlessClient(
         setCoroutineScope(scope)
     }
 
+    /**
+     * Sets the coroutine scope of the activity.
+     *
+     * @param coroutineScope The coroutine scope of the activity.
+     * @return The PasswordlessClient instance.
+     * @throws IllegalStateException If the coroutine scope is set more than once.
+     */
     fun setCoroutineScope(coroutineScope: CoroutineScope): PasswordlessClient =
         apply {
             if (::_coroutineScope.isInitialized) {
@@ -62,6 +69,13 @@ class PasswordlessClient(
             _coroutineScope = coroutineScope
         }
 
+    /**
+     * Sets the context of the activity.
+     *
+     * @param context The context of the activity.
+     * @return The PasswordlessClient instance.
+     * @throws IllegalStateException If the context is set more than once.
+     */
     fun setContext(context: Context): PasswordlessClient =
         apply {
             if (::_context.isInitialized) {
@@ -87,7 +101,6 @@ class PasswordlessClient(
      *                     It provides a boolean indicating success, an optional exception in case of failure,
      *                     and the response containing information about the completed login if successful.
      */
-
     fun login(
         alias: String,
         onLoginResult: (Boolean, Exception?, LoginCompleteResponse?) -> Unit
@@ -112,21 +125,21 @@ class PasswordlessClient(
                     )
                 )
             )
-            val publicKeyCredential = credentialResponse.credential as PublicKeyCredential
 
             val completeInputModel = LoginCompleteRequest(
                 session = beginResponseData.session,
-                response = publicKeyCredential,
+                response = credentialResponse.credential as PublicKeyCredential,
                 origin = _options.origin,
                 rpId = _options.rpId
             )
+
             val completeResponse = _httpClient
                 .loginComplete(completeInputModel)
                 .throwIfNetworkRequestFailed()
 
             onLoginResult(true, null, completeResponse.body()!!)
         } catch (e: Exception) {
-            Log.e("bwp-login-begin", "Cannot initiate login request", e)
+            Log.e("bwp-login", "Unexpectedly failed logging in with FIDO2 credential.", e)
             withContext(Dispatchers.Main) {
                 onLoginResult(false, e, null)
             }
@@ -142,7 +155,6 @@ class PasswordlessClient(
      *                         It provides a boolean indicating success, an optional exception in case of failure,
      *                         and the response containing information about the completed registration if successful.
      */
-
     fun register(
         token: String,
         nickname: String = "",
@@ -160,7 +172,6 @@ class PasswordlessClient(
                     .registerBegin(beginInputModel)
                     .throwIfNetworkRequestFailed()
 
-
             val beginResult: RegisterBeginResponse = beginResponse.body()!!
 
             val response = credentialManager.createCredential(
@@ -175,14 +186,15 @@ class PasswordlessClient(
                 origin = _options.origin,
                 rpId = _options.rpId
             )
-            val registerCompleteResponse =
+
+            val completeResponse =
                 _httpClient.registerComplete(completeRequest).throwIfNetworkRequestFailed()
 
             withContext(Dispatchers.Main) {
-                onRegisterResult(true, null, registerCompleteResponse.body())
+                onRegisterResult(true, null, completeResponse.body())
             }
         } catch (e: Exception) {
-            Log.e("bwp-register-begin", "Cannot call registerRequest", e)
+            Log.e("bwp-register", "Unexpectedly failed creating FIDO2 credential.", e)
             withContext(Dispatchers.Main) {
                 onRegisterResult(false, e, null)
             }
