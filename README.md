@@ -21,25 +21,27 @@ Apache Maven
 <dependency>
   <groupId>com.bitwarden</groupId>
   <artifactId>passwordless-android</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ```
 
 Gradle Kotlin DSL
 
 ```kotlin
-implementation("com.bitwarden:passwordless-android:1.0.1")
+implementation("com.bitwarden:passwordless-android:1.0.4")
 ```
 
 Gradle Groovy DSL
 
 ```groovy
-implementation 'com.bitwarden:passwordless-android:1.0.1'
+implementation 'com.bitwarden:passwordless-android:1.0.4'
 ```
 
 ### Permissions
 
-In your `AndroidManifest.xml`, you will need to add the following permissions:
+When the library has been added to your app, the following permission will be added automatically.
+
+It is not necessary for you to add the following permission.
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
