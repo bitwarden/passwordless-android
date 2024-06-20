@@ -39,7 +39,7 @@ implementation 'com.bitwarden:passwordless-android:1.0.4'
 
 ### Permissions
 
-When the library has been added to your app, the following permission will be added automatically.
+When the library has been added to your app, the following permission will be added to your `AndroidManifest.xml` automatically when the app is being built.
 
 It is not necessary for you to add the following permission.
 
