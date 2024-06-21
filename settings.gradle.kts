@@ -14,5 +14,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Passwordless Android Client"
+
 include(":app")
 include(":passwordless")
