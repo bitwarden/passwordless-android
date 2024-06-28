@@ -1,5 +1,6 @@
 package dev.passwordless.sampleapp;
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -37,7 +38,9 @@ class AddCredentialFragment : Fragment() {
         _binding = FragmentAddCredentialBinding.inflate(inflater, container, false)
 
         if (!session.isLoggedIn()) {
-            findNavController().navigate(R.id.action_add_credential_to_login_fragment)
+            val intent = Intent(context, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            requireContext().startActivity(intent)
         }
 
         return binding.root
