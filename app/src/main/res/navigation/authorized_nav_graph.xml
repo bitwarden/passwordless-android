@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/authorized_nav_graph"
+    app:startDestination="@id/credentials_fragment">
+
+    <fragment
+        android:id="@+id/credentials_fragment"
+        android:name="dev.passwordless.sampleapp.CredentialsFragment"
+        android:label="@string/credentials_fragment_label"
+        tools:layout="@layout/fragment_credentials">
+
+        <action
+            android:id="@+id/action_credentials_to_add_credential_fragment"
+            app:destination="@id/add_credential_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/add_credential_fragment"
+        android:name="dev.passwordless.sampleapp.AddCredentialFragment"
+        android:label="@string/add_credential_fragment_label"
+        tools:layout="@layout/fragment_add_credential">
+
+        <action
+            android:id="@+id/action_add_credential_to_credentials_fragment"
+            app:destination="@id/credentials_fragment" />
+    </fragment>
+</navigation>

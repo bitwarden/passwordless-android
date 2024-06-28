@@ -24,6 +24,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="dev.passwordless.sampleapp.AuthorizedActivity"
+            android:exported="false"
+            android:label="@string/app_name">
+        </activity>
+
         <!-- Digital Asset Links -->
         <meta-data
             android:name="asset_statements"

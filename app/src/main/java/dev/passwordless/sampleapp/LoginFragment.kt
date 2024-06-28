@@ -1,6 +1,7 @@
 package dev.passwordless.sampleapp
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -84,7 +85,9 @@ class LoginFragment : Fragment() {
                                     ).show()
                                 } else {
                                     session.setJwtString(data.jwtToken)
-                                    findNavController().navigate(R.id.action_login_to_credentials_fragment)
+                                    val intent = Intent(context, AuthorizedActivity::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                    requireContext().startActivity(intent)
                                 }
                             }
                         }
