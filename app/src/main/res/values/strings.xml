@@ -2,7 +2,6 @@
     <string name="app_name">Passwordless.dev Android Sample</string>
     <string name="action_settings">Settings</string>
 
-    <!-- Strings used for fragments for navigation -->
     <string name="register_fragment_label">Registration</string>
     <string name="login_fragment_label">Login</string>
     <string name="credentials_fragment_label">Credentials</string>
@@ -12,6 +11,8 @@
     <string name="previous">Previous</string>
 
     <string name="username_hint">Username</string>
+    <string name="firstname_hint">First Name</string>
+    <string name="lastname_hint">Last Name</string>
     <string name="alias">Alias</string>
     <string name="alias_hint">Alias (optional)</string>
     <string name="alias_hint_description">When \'alias\' is left empty, your credential will be discoverable. You won\'t have to enter the \'alias\' value entered previously to log in.</string>

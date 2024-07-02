@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.passwordless.android.PasswordlessClient
 import dev.passwordless.android.utils.PasswordlessUtils
 import dev.passwordless.sampleapp.auth.Session
+import dev.passwordless.sampleapp.contracts.AddCredentialRequest
 import dev.passwordless.sampleapp.contracts.UserRegisterRequest
 import dev.passwordless.sampleapp.databinding.FragmentAddCredentialBinding
 import dev.passwordless.sampleapp.yourbackend.YourBackendHttpClient
@@ -54,8 +55,7 @@ class AddCredentialFragment : Fragment() {
                 val alias = binding.aliasEditText.text.toString()
                 val username = session.getUsername()!!
                 try {
-                    val response =
-                        httpClient.register(UserRegisterRequest(username, alias)).body()?.token!!
+                    val response = httpClient.addCredential(session.getUserId()!!, AddCredentialRequest(alias)).body()?.token!!
                     passwordless.register(
                         response,
                         alias + username
