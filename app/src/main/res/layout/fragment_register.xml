@@ -17,13 +17,36 @@
 
         <EditText
             android:id="@+id/usernameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="@string/username_hint"
+            android:inputType="text"
+            android:maxLength="20" />
+
+        <EditText
+            android:id="@+id/firstNameEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="@string/firstname_hint"
+            android:inputType="text"
+            android:maxLength="30" />
+
+        <EditText
+            android:id="@+id/lastNameEditText"
             android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ems="10"
-            android:hint="@string/username_hint"
-            android:inputType="text" />
+            android:hint="@string/lastname_hint"
+            android:inputType="text"
+            android:maxLength="30" />
 
         <LinearLayout
             android:gravity="center"
@@ -38,7 +61,8 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/alias_hint"
-                android:inputType="text" />
+                android:inputType="text"
+                android:maxLength="20" />
 
             <TextView
                 android:gravity="center"

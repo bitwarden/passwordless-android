@@ -56,13 +56,14 @@ class RegisterFragment : Fragment() {
             lifecycleScope.launch {
                 val alias = binding.aliasEditText.text.toString()
                 val username = binding.usernameEditText.text.toString()
+                val firstName = binding.firstNameEditText.text.toString()
+                val lastName = binding.lastNameEditText.text.toString()
                 try {
-                    val responseToken =
-                        httpClient.register(UserRegisterRequest(username, alias)).body()?.token!!
+                    val registerRequest = UserRegisterRequest(username, alias, firstName, lastName)
+                    val responseToken = httpClient.register(registerRequest).body()?.token!!
                     _passwordless.register(
                         responseToken,
-                        alias + username
-                    ) { success, exception, result ->
+                        alias + username) { success, exception, result ->
                         if (success) {
                             Toast.makeText(context, result.toString(), Toast.LENGTH_SHORT).show()
                         } else {
