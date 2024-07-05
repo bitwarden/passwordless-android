@@ -23,17 +23,11 @@ class SignatureService {
         val packageManager = context.packageManager
         val packageName = context.packageName
         try {
-            val packageInfo: PackageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-            } else {
-                packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-            }
+            val packageInfo: PackageInfo = packageManager.getPackageInfo(
+                packageName,
+                PackageManager.GET_SIGNING_CERTIFICATES)
 
-            val signatures: Array<Signature> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                packageInfo.signingInfo.apkContentsSigners
-            } else {
-                packageInfo.signatures
-            }
+            val signatures: Array<Signature> = packageInfo.signingInfo.apkContentsSigners
 
             val signature: ByteArray = signatures[0].toByteArray()
             val md: MessageDigest = MessageDigest.getInstance("SHA-256")
