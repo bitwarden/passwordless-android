@@ -21,20 +21,20 @@ Apache Maven
 <dependency>
   <groupId>com.bitwarden</groupId>
   <artifactId>passwordless-android</artifactId>
-  <version>1.0.4</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
 Gradle Kotlin DSL
 
 ```kotlin
-implementation("com.bitwarden:passwordless-android:1.0.4")
+implementation("com.bitwarden:passwordless-android:1.1.0")
 ```
 
 Gradle Groovy DSL
 
 ```groovy
-implementation 'com.bitwarden:passwordless-android:1.0.4'
+implementation 'com.bitwarden:passwordless-android:1.1.0'
 ```
 
 ### Permissions
@@ -56,9 +56,6 @@ data class PasswordlessOptions(
 
    // Identifier for your server, for example 'example.com' if your backend is hosted at https://example.com.
    val rpId: String,
-
-   // This is where your Facet ID goes
-   val origin: String,
 
    // Where your backend is hosted
    val backendUrl:String,
@@ -86,54 +83,6 @@ In your application's `res/xml/assetlinks.xml`, you will then need to add the fo
     <string name="assetlinks">https://yourexample.com/.well-known/assetlinks.json</string>
 </resources>
 ```
-
-#### Facet ID
-
-The `Facet ID` will be used at a later point in this guide to use as the `origin`.
-
-To obtain the Facet ID continue the steps below, the facet id typically looks like:
-
-`android:apk-key-hash:POIplOLeHuvl-XAQckH0DwY4Yb1ydnnKcmhn-jibZbk`
-
-1. Execute the following command in your terminal:
-
-  - MacOS & Linux:
-    ```bash
-    # Linux, Mac OS, Git Bash, ...
-    keytool -list -v -keystore ~/.android/debug.keystore | grep "SHA256: " | cut -d " " -f 3 | xxd -r -p | openssl base64 | sed 's/=//g'
-    ```
-  - Windows:
-
-    ```powershell
-    # Run keytool command and extract SHA256 hash
-    $keytoolOutput = keytool -list -v -keystore $HOME\.android\debug.keystore
-    $sha256Hash = ($keytoolOutput | Select-String "SHA256: ").ToString().Split(" ")[2]
-
-    # Remove any non-hex characters from the hash
-    $hexHash = $sha256Hash -replace "[^0-9A-Fa-f]"
-
-    # Convert the hexadecimal string to a byte array
-    $byteArray = [byte[]]@()
-    for ($i = 0; $i -lt $hexHash.Length; $i += 2) {
-      $byteArray += [byte]([Convert]::ToUInt32($hexHash.Substring($i, 2), 16))
-    }
-
-    # Convert the byte array to a base64 string
-    $base64String = [Convert]::ToBase64String($byteArray)
-
-    Write-Output $base64String
-    ```
-
-2. The default password for the debug keystore is `android`. For your production keystore, enter your chosen password.
-
-3. This command will output BASE64:
-   `POIplOLeHuvl+XAQckH0DwY4Yb1ydnnKcmhn+jibZbk`
-
-4. You need to convert this to BASE64URL format:
-   `POIplOLeHuvl-XAQckH0DwY4Yb1ydnnKcmhn-jibZbk`
-
-5. Now append it to `android:apk-key-hash:` to get the Facet ID:
-   `android:apk-key-hash:POIplOLeHuvl-XAQckH0DwY4Yb1ydnnKcmhn-jibZbk`
 
 ### Configuration (Your back-end)
 

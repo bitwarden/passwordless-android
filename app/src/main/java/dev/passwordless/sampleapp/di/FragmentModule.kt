@@ -34,7 +34,6 @@ class FragmentModule {
         val options = PasswordlessOptions(
             DemoPasswordlessOptions.API_KEY,
             DemoPasswordlessOptions.RP_ID,
-            DemoPasswordlessOptions.ORIGIN,
             DemoPasswordlessOptions.API_URL
         )
 

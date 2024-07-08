@@ -19,6 +19,7 @@ import dev.passwordless.android.rest.contracts.register.RegisterCompleteRequest
 import dev.passwordless.android.rest.contracts.register.RegisterCompleteResponse
 import dev.passwordless.android.rest.exceptions.PasswordlessApiException
 import dev.passwordless.android.rest.exceptions.ProblemDetails
+import dev.passwordless.android.utils.SignatureService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,6 +39,7 @@ class PasswordlessClient(
     private lateinit var _coroutineScope: CoroutineScope
     private lateinit var credentialManager: CredentialManager
     private lateinit var _context: Context
+    private lateinit var _signatureService: SignatureService
 
     /**
      * Manages the communication with the Credential Manager API and performs registration operations for the Passwordless authentication flow.
@@ -82,6 +84,7 @@ class PasswordlessClient(
                 throw IllegalStateException("Context cannot be set more than once")
             }
             _context = context
+            _signatureService = SignatureService(_context)
             credentialManager = CredentialManager.create(_context)
         }
 
@@ -109,7 +112,7 @@ class PasswordlessClient(
             val beginInputModel = LoginBeginRequest(
                 alias = alias,
                 rpId = _options.rpId,
-                origin = _options.origin
+                origin = _signatureService.getFacetId()
             )
             val beginResponse = _httpClient
                 .loginBegin(beginInputModel)
@@ -129,7 +132,7 @@ class PasswordlessClient(
             val completeInputModel = LoginCompleteRequest(
                 session = beginResponseData.session,
                 response = credentialResponse.credential as PublicKeyCredential,
-                origin = _options.origin,
+                origin = _signatureService.getFacetId(),
                 rpId = _options.rpId
             )
 
@@ -164,7 +167,7 @@ class PasswordlessClient(
             val beginInputModel = RegisterBeginRequest(
                 token = token,
                 rpId = _options.rpId,
-                origin = _options.origin
+                origin = _signatureService.getFacetId()
             )
 
             val beginResponse =
@@ -183,7 +186,7 @@ class PasswordlessClient(
                 session = beginResult.session,
                 response = response,
                 nickname = nickname,
-                origin = _options.origin,
+                origin = _signatureService.getFacetId(),
                 rpId = _options.rpId
             )
 
