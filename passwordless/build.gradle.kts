@@ -45,10 +45,7 @@ android {
     }
 
     publishing {
-        singleVariant("release") {
-            withJavadocJar()
-            withSourcesJar()
-        }
+        singleVariant("release")
     }
 }
 
@@ -128,11 +125,12 @@ afterEvaluate {
             }
         }
     }
-}
 
-signing {
-    useInMemoryPgpKeys(
-        System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey"),
-        System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKeyPassword")
-    )
+    signing {
+        useInMemoryPgpKeys(
+            System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey"),
+            System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKeyPassword")
+        )
+        sign(publishing.publications["release"])
+    }
 }
