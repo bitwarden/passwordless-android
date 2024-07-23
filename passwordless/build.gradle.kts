@@ -107,7 +107,7 @@ afterEvaluate {
 
                     scm {
                         url = "https://github.com/bitwarden/passwordless-android"
-                        connection = "scm:git:git@github.com:bitwarden/passwordless-android.git"
+                        connection = "scm:git:git@github.com:passwordless/passwordless-android.git"
                         developerConnection = "scm:git:git@github.com:bitwarden/passwordless-android.git"
                     }
                 }
