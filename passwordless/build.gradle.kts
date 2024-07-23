@@ -116,13 +116,14 @@ afterEvaluate {
 
         repositories {
             maven {
+                name = " S01"
                 val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
                 val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
                 url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
 
                 credentials {
-                    username = System.getenv("ORG_GRADLE_PROJECT_mavenCentralUsername") ?: ""
-                    password = System.getenv("ORG_GRADLE_PROJECT_mavenCentralPassword") ?: ""
+                    username = System.getenv("ORG_GRADLE_PROJECT_mavenCentralUsername") ?: throw Exception("'ORG_GRADLE_PROJECT_mavenCentralUsername' is missing.")
+                    password = System.getenv("ORG_GRADLE_PROJECT_mavenCentralPassword") ?: throw Exception("'ORG_GRADLE_PROJECT_mavenCentralPassword' is missing.")
                 }
             }
         }
