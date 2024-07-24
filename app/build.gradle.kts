@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    alias(libs.plugins.detekt)
 }
 
 android {
@@ -60,4 +61,31 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
+    detektPlugins(libs.detekt.detekt.formatting)
+    detektPlugins(libs.detekt.detekt.rules)
+}
+
+detekt {
+    autoCorrect = true
+    config.from(files("$rootDir/detekt-config.yml"))
+}
+
+tasks {
+    check {
+        dependsOn("detekt")
+    }
+
+    withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+        jvmTarget = libs.versions.jvmTarget.get()
+    }
+    withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
+        jvmTarget = libs.versions.jvmTarget.get()
+    }
+
+    withType<Test> {
+        useJUnitPlatform()
+        maxHeapSize = "2g"
+        maxParallelForks = Runtime.getRuntime().availableProcessors()
+        jvmArgs = jvmArgs.orEmpty() + "-XX:+UseParallelGC"
+    }
 }

@@ -2,6 +2,7 @@ import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
+    alias(libs.plugins.detekt)
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("com.vanniktech.maven.publish")
@@ -113,4 +114,32 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.mockito.core)
+
+    detektPlugins(libs.detekt.detekt.formatting)
+    detektPlugins(libs.detekt.detekt.rules)
+}
+
+detekt {
+    autoCorrect = true
+    config.from(files("$rootDir/detekt-config.yml"))
+}
+
+tasks {
+    check {
+        dependsOn("detekt")
+    }
+
+    withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+        jvmTarget = libs.versions.jvmTarget.get()
+    }
+    withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
+        jvmTarget = libs.versions.jvmTarget.get()
+    }
+
+    withType<Test> {
+        useJUnitPlatform()
+        maxHeapSize = "2g"
+        maxParallelForks = Runtime.getRuntime().availableProcessors()
+        jvmArgs = jvmArgs.orEmpty() + "-XX:+UseParallelGC"
+    }
 }

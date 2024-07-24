@@ -9,6 +9,7 @@ mockito-core = "5.12.0"
 navigation = "2.7.7"
 preference-ktx = "1.2.1"
 retrofit = "2.11.0"
+jvmTarget = "17"
 jwtdecode = "2.0.2"
 junit = "4.13.2"
 ext-junit = "1.2.1"
@@ -16,6 +17,7 @@ espresso-core = "3.6.1"
 gson = "2.11.0"
 okhttp-logging-interceptor = "4.12.0"
 hilt = "2.51.1"
+detekt = "1.23.6"
 
 [libraries]
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
@@ -23,6 +25,8 @@ core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+detekt-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+detekt-detekt-rules = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinx-coroutines-play-services" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-play-services" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -41,3 +45,6 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp-logging-interceptor" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+
+[plugins]
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
