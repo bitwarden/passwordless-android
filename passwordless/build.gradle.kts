@@ -45,7 +45,10 @@ android {
     }
 
     publishing {
-        singleVariant("release")
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 }
 
@@ -69,68 +72,69 @@ dependencies {
     androidTestImplementation(libs.mockito.core)
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = "com.bitwarden"
+            artifactId = "passwordless-android"
+            version = project.version.toString()
+
+            afterEvaluate {
                 from(components["release"])
-                groupId = "com.bitwarden"
-                artifactId = "passwordless-android"
-                version = project.version.toString()
+            }
 
-                pom {
-                    name = "Passwordless Android Client SDK"
-                    description = "Passwordless Android Client SDK allows you to integrate Passwordless into your Android application."
-                    url = "https://www.github.com/bitwarden/passwordless-android/"
-                    inceptionYear = "2024"
+            pom {
+                name = "Passwordless Android Client SDK"
+                description = "Passwordless Android Client SDK allows you to integrate Passwordless into your Android application."
+                url = "https://www.github.com/bitwarden/passwordless-android/"
+                inceptionYear = "2024"
 
-                    licenses {
-                        license {
-                            name = "GNU General Public License (GPL) v3.0"
-                            url = "https://github.com/bitwarden/passwordless-android/blob/main/LICENSE_GPL.txt"
-                            distribution = "https://github.com/bitwarden/passwordless-android/blob/main/LICENSE_GPL.txt"
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id = "jonashendrickx"
-                            name = "Jonas Hendrickx"
-                            organization = "Bitwarden"
-                            organizationUrl = "https://github.com/bitwarden"
-                            url = "https://github.com/jonashendrickx"
-                        }
-                    }
-
-                    scm {
-                        url = "https://github.com/bitwarden/passwordless-android"
-                        connection = "scm:git:git@github.com:passwordless/passwordless-android.git"
-                        developerConnection = "scm:git:git@github.com:bitwarden/passwordless-android.git"
+                licenses {
+                    license {
+                        name = "GNU General Public License (GPL) v3.0"
+                        url = "https://github.com/bitwarden/passwordless-android/blob/main/LICENSE_GPL.txt"
+                        distribution = "https://github.com/bitwarden/passwordless-android/blob/main/LICENSE_GPL.txt"
                     }
                 }
-            }
-        }
 
-        repositories {
-            maven {
-                name = " S01"
-                val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-                url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+                developers {
+                    developer {
+                        id = "jonashendrickx"
+                        name = "Jonas Hendrickx"
+                        organization = "Bitwarden"
+                        organizationUrl = "https://github.com/bitwarden"
+                        url = "https://github.com/jonashendrickx"
+                    }
+                }
 
-                credentials {
-                    username = System.getenv("ORG_GRADLE_PROJECT_mavenCentralUsername") ?: throw Exception("'ORG_GRADLE_PROJECT_mavenCentralUsername' is missing.")
-                    password = System.getenv("ORG_GRADLE_PROJECT_mavenCentralPassword") ?: throw Exception("'ORG_GRADLE_PROJECT_mavenCentralPassword' is missing.")
+                scm {
+                    url = "https://github.com/bitwarden/passwordless-android"
+                    connection = "scm:git:git@github.com:bitwarden/passwordless-android.git"
+                    developerConnection = "scm:git:git@github.com:bitwarden/passwordless-android.git"
                 }
             }
         }
     }
 
-    signing {
-        useInMemoryPgpKeys(
-            System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey"),
-            System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKeyPassword")
-        )
-        sign(publishing.publications["release"])
+    repositories {
+        maven {
+            name = "S01"
+            val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+
+            credentials {
+                username = System.getenv("ORG_GRADLE_PROJECT_mavenCentralUsername") ?: throw Exception("'ORG_GRADLE_PROJECT_mavenCentralUsername' is missing.")
+                password = System.getenv("ORG_GRADLE_PROJECT_mavenCentralPassword") ?: throw Exception("'ORG_GRADLE_PROJECT_mavenCentralPassword' is missing.")
+            }
+        }
     }
+}
+
+signing {
+    useInMemoryPgpKeys(
+        System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey"),
+        System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKeyPassword")
+    )
+    sign(publishing.publications)
 }
