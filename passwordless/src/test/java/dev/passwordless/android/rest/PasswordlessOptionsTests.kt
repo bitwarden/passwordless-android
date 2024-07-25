@@ -45,7 +45,8 @@ class PasswordlessOptionsTests {
         val apiUrl = "https://v4.passwordless.dev"
 
         // act
-        assertThrows("rpId must not be blank", IllegalArgumentException::class.java) {
+        val expected = "rpId must not be blank"
+        assertThrows(expected, IllegalArgumentException::class.java) {
             sut = PasswordlessOptions(apiKey, rpId, apiUrl)
         }
     }
@@ -58,7 +59,8 @@ class PasswordlessOptionsTests {
         val apiUrl = "https://v4.passwordless.dev"
 
         // act
-        assertThrows("apiKey must be a valid API key '<appname>:public:<uuid-without-dashes>'", IllegalArgumentException::class.java) {
+        val expected = "apiKey must be a valid API key '<appname>:public:<uuid-without-dashes>'"
+        assertThrows(expected, IllegalArgumentException::class.java) {
             sut = PasswordlessOptions(apiKey, rpId, apiUrl)
         }
     }

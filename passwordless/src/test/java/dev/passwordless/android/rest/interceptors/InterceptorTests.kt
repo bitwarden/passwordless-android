@@ -12,32 +12,32 @@ import org.junit.Test
 import java.io.IOException
 
 class InterceptorTests {
-    private lateinit var _server: MockWebServer
-    private lateinit var _interceptor: ProblemDetailsInterceptor
+    private lateinit var server: MockWebServer
+    private lateinit var interceptor: ProblemDetailsInterceptor
 
     @Before
     @Throws(IOException::class)
     fun setup() {
-        _server = MockWebServer()
-        _server.start()
-        _interceptor = ProblemDetailsInterceptor()
+        server = MockWebServer()
+        server.start()
+        interceptor = ProblemDetailsInterceptor()
     }
 
     @After
     @Throws(IOException::class)
     fun shutdown() {
-        _server.shutdown()
+        server.shutdown()
     }
 
     @Test
     @Throws(InterruptedException::class)
     fun intercept_returns_response_when_successful() {
-        _server.enqueue(MockResponse().setResponseCode(200))
+        server.enqueue(MockResponse().setResponseCode(200))
         val client: OkHttpClient = OkHttpClient.Builder()
-            .addInterceptor(_interceptor)
+            .addInterceptor(interceptor)
             .build()
         val request = Request.Builder()
-            .url(_server.url("/"))
+            .url(server.url("/"))
             .build()
         try {
             client.newCall(request).execute()
@@ -58,16 +58,16 @@ class InterceptorTests {
                 "detail": "A valid 'ApiKey' header is required."
             }
         """
-        _server.enqueue(MockResponse()
+        server.enqueue(MockResponse()
             .setResponseCode(401)
             .setHeader("Content-Type", "application/problem+json")
             .setBody(expectedJson))
 
         val client: OkHttpClient = OkHttpClient.Builder()
-            .addInterceptor(_interceptor)
+            .addInterceptor(interceptor)
             .build()
         val request = Request.Builder()
-            .url(_server.url("/"))
+            .url(server.url("/"))
             .build()
         try {
             client.newCall(request).execute()
@@ -77,7 +77,8 @@ class InterceptorTests {
             Assert.assertEquals(401, e.details.status)
             Assert.assertEquals("A valid 'ApiKey' header is required.", e.details.detail)
             Assert.assertEquals("A valid 'ApiKey' header is required.", e.details.title)
-            Assert.assertEquals("https://docs.passwordless.dev/guide/errors.html#ApiKey", e.details.type)
+            Assert.assertEquals("https://docs.passwordless.dev/guide/errors.html#ApiKey",
+                e.details.type,)
         } catch (e: IOException) {
             Assert.fail("Unexpected exception.")
         }

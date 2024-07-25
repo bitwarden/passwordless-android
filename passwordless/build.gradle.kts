@@ -92,13 +92,6 @@ tasks {
     withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
         jvmTarget = libs.versions.jvmTarget.get()
     }
-
-    withType<Test> {
-        useJUnitPlatform()
-        maxHeapSize = "2g"
-        maxParallelForks = Runtime.getRuntime().availableProcessors()
-        jvmArgs = jvmArgs.orEmpty() + "-XX:+UseParallelGC"
-    }
 }
 
 publishing {

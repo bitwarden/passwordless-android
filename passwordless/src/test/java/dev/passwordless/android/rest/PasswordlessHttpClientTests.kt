@@ -40,7 +40,7 @@ class PasswordlessHttpClientTests {
             .registerTypeAdapter(CreatePublicKeyCredentialRequest::class.java, mockDeserializer)
             .create()
         `when`(mockDeserializer.deserialize(any(), any(), any())).thenReturn(
-            mockCreatePublicKeyCredentialRequest
+            mockCreatePublicKeyCredentialRequest,
         )
         apiService = Retrofit.Builder()
             .baseUrl(mockWebServer.url("/"))
@@ -61,7 +61,7 @@ class PasswordlessHttpClientTests {
         val inputModel = RegisterBeginRequest(
             "register_token",
             "adminconsole.passwordless.dev",
-            "https://adminconsole.passwordless.dev"
+            "https://adminconsole.passwordless.dev",
         )
 
         val jsonString = "{\n" +
@@ -132,7 +132,7 @@ class PasswordlessHttpClientTests {
                 "    \"status\": \"ok\",\n" +
                 "    \"errorMessage\": \"\"\n" +
                 "  },\n" +
-                "  \"session\": \"session_k8QgN2JiyYtaoaDU9-Z75sZzTm-Kp42D0H4AffaF1mQTBrnFApqDp09wdGlvbnOLplN0YXR1c6Jva6xFcnJvck1lc3NhZ2WgolJwg6JJZNkgOTkwYi0xNjMtNTMtMjUyLTgubmdyb2stZnJlZS5hcHCkTmFtZdkgOTkwYi0xNjMtNTMtMjUyLTgubmdyb2stZnJlZS5hcHCkSWNvbsCkVXNlcoOkTmFtZaZoZGhkYmSiSWTEJGRjMjhhYmJhLWRlZTQtNGE4ZS1hNWNmLTI2YzU2Yjg0ODllNqtEaXNwbGF5TmFtZaZoZGhkYmSpQ2hhbGxlbmdlxBAdZI-an96hzfDmOAAFPCGnsFB1YktleUNyZWRQYXJhbXOagqRUeXBlAKNBbGf4gqRUeXBlAKNBbGf5gqRUeXBlAKNBbGfR_v-CpFR5cGUAo0FsZ9DbgqRUeXBlAKNBbGfQ3YKkVHlwZQCjQWxn0f7-gqRUeXBlAKNBbGfQ2oKkVHlwZQCjQWxn0NyCpFR5cGUAo0FsZ9H-_YKkVHlwZQCjQWxn0NmnVGltZW91dM3qYKtBdHRlc3RhdGlvbgC2QXV0aGVudGljYXRvclNlbGVjdGlvboS3QXV0aGVudGljYXRvckF0dGFjaG1lbnTAq1Jlc2lkZW50S2V5ALJSZXF1aXJlUmVzaWRlbnRLZXnDsFVzZXJWZXJpZmljYXRpb24BskV4Y2x1ZGVDcmVkZW50aWFsc5CqRXh0ZW5zaW9uc4inRXhhbXBsZcClQXBwSUTAtkF1dGhlbnRpY2F0b3JTZWxlY3Rpb27AqkV4dGVuc2lvbnPAtlVzZXJWZXJpZmljYXRpb25NZXRob2TArERldmljZVB1YktlecCpQ3JlZFByb3Bzw6NQUkbAp0FsaWFzZXORpWZpZnVqrEFsaWFzSGFzaGluZ8POAnDXnQ\"\n" +
+                "  \"session\": \"session_123\"\n" +
                 "}"
         val mockedResponse = MockResponse()
             .setResponseCode(200)
@@ -140,7 +140,8 @@ class PasswordlessHttpClientTests {
         val mockRequestJson =
             gson.fromJson(jsonString, JsonObject::class.java).getAsJsonObject("data")
         mockWebServer.enqueue(mockedResponse)
-        `when`(mockCreatePublicKeyCredentialRequest.requestJson).thenReturn(mockRequestJson.toString())
+            `when`(mockCreatePublicKeyCredentialRequest.requestJson)
+                .thenReturn(mockRequestJson.toString())
 
         // act
         val actualResponse = apiService.registerBegin(inputModel)
@@ -148,8 +149,8 @@ class PasswordlessHttpClientTests {
         assert(actualResponse.isSuccessful)
         val actual: RegisterBeginResponse = actualResponse.body()!!
         assertEquals(
-            "session_k8QgN2JiyYtaoaDU9-Z75sZzTm-Kp42D0H4AffaF1mQTBrnFApqDp09wdGlvbnOLplN0YXR1c6Jva6xFcnJvck1lc3NhZ2WgolJwg6JJZNkgOTkwYi0xNjMtNTMtMjUyLTgubmdyb2stZnJlZS5hcHCkTmFtZdkgOTkwYi0xNjMtNTMtMjUyLTgubmdyb2stZnJlZS5hcHCkSWNvbsCkVXNlcoOkTmFtZaZoZGhkYmSiSWTEJGRjMjhhYmJhLWRlZTQtNGE4ZS1hNWNmLTI2YzU2Yjg0ODllNqtEaXNwbGF5TmFtZaZoZGhkYmSpQ2hhbGxlbmdlxBAdZI-an96hzfDmOAAFPCGnsFB1YktleUNyZWRQYXJhbXOagqRUeXBlAKNBbGf4gqRUeXBlAKNBbGf5gqRUeXBlAKNBbGfR_v-CpFR5cGUAo0FsZ9DbgqRUeXBlAKNBbGfQ3YKkVHlwZQCjQWxn0f7-gqRUeXBlAKNBbGfQ2oKkVHlwZQCjQWxn0NyCpFR5cGUAo0FsZ9H-_YKkVHlwZQCjQWxn0NmnVGltZW91dM3qYKtBdHRlc3RhdGlvbgC2QXV0aGVudGljYXRvclNlbGVjdGlvboS3QXV0aGVudGljYXRvckF0dGFjaG1lbnTAq1Jlc2lkZW50S2V5ALJSZXF1aXJlUmVzaWRlbnRLZXnDsFVzZXJWZXJpZmljYXRpb24BskV4Y2x1ZGVDcmVkZW50aWFsc5CqRXh0ZW5zaW9uc4inRXhhbXBsZcClQXBwSUTAtkF1dGhlbnRpY2F0b3JTZWxlY3Rpb27AqkV4dGVuc2lvbnPAtlVzZXJWZXJpZmljYXRpb25NZXRob2TArERldmljZVB1YktlecCpQ3JlZFByb3Bzw6NQUkbAp0FsaWFzZXORpWZpZnVqrEFsaWFzSGFzaGluZ8POAnDXnQ",
-            actual.session
+            "session_123",
+            actual.session,
         )
 
         val requestJson = gson.fromJson(actual.data.requestJson, JsonObject::class.java)

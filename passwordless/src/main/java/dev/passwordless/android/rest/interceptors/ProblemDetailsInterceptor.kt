@@ -6,6 +6,9 @@ import dev.passwordless.android.rest.serializers.JsonSerializerImpl
 import okhttp3.Interceptor
 import okhttp3.Response
 
+/**
+ * Interceptor for handling problem details responses.
+ */
 class ProblemDetailsInterceptor : Interceptor {
     @Throws(PasswordlessApiException::class)
     override fun intercept(chain: Interceptor.Chain): Response {

@@ -9,14 +9,17 @@ import com.google.gson.stream.JsonReader
 import java.io.StringReader
 import java.lang.reflect.Type
 
+/**
+ * Serializer for public key credentials.
+ */
 class PublicKeyCredentialSerializer :
     JsonSerializer<PublicKeyCredential> {
     override fun serialize(
         src: PublicKeyCredential,
         typeOfSrc: Type?,
-        context: JsonSerializationContext?
+        context: JsonSerializationContext?,
     ): JsonElement {
-        val reader = JsonReader(StringReader(src.authenticationResponseJson));
+        val reader = JsonReader(StringReader(src.authenticationResponseJson))
         return JsonParser.parseReader(reader)
     }
 }
