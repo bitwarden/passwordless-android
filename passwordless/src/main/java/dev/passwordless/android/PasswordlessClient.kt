@@ -6,6 +6,8 @@ import androidx.credentials.CreatePublicKeyCredentialResponse
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.PublicKeyCredential
+import androidx.credentials.exceptions.CreateCredentialException
+import androidx.credentials.exceptions.GetCredentialException
 import dev.passwordless.android.rest.PasswordlessHttpClient
 import dev.passwordless.android.rest.PasswordlessHttpClientFactory
 import dev.passwordless.android.rest.PasswordlessOptions
@@ -27,22 +29,23 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 /**
- * Manages the communication with the Credential Manager API and performs registration operations for the Passwordless authentication flow.
- *
+ * Manages the communication with the Credential Manager API and performs registration operations
+ * for the Passwordless authentication flow.
  * @param options The configuration options for Passwordless authentication.
  */
 class PasswordlessClient(
-    private val _options: PasswordlessOptions
+    private val options: PasswordlessOptions,
 ) {
-    private val _httpClient: PasswordlessHttpClient = PasswordlessHttpClientFactory.create(_options)
+    private val httpClient: PasswordlessHttpClient = PasswordlessHttpClientFactory.create(options)
 
-    private lateinit var _coroutineScope: CoroutineScope
+    private lateinit var coroutineScope: CoroutineScope
     private lateinit var credentialManager: CredentialManager
-    private lateinit var _context: Context
-    private lateinit var _signatureService: SignatureService
+    private lateinit var context: Context
+    private lateinit var signatureService: SignatureService
 
     /**
-     * Manages the communication with the Credential Manager API and performs registration operations for the Passwordless authentication flow.
+     * Manages the communication with the Credential Manager API and performs registration
+     * operations for the Passwordless authentication flow.
      *
      * @param options The configuration options for Passwordless authentication.
      * @param context The context of the activity.
@@ -51,7 +54,8 @@ class PasswordlessClient(
     constructor(
         options: PasswordlessOptions,
         context: Context,
-        scope: CoroutineScope) : this(options) {
+        scope: CoroutineScope,
+    ) : this(options) {
         setContext(context)
         setCoroutineScope(scope)
     }
@@ -65,10 +69,10 @@ class PasswordlessClient(
      */
     fun setCoroutineScope(coroutineScope: CoroutineScope): PasswordlessClient =
         apply {
-            if (::_coroutineScope.isInitialized) {
+            if (::coroutineScope.isInitialized) {
                 throw IllegalStateException("CoroutineScope cannot be set more than once")
             }
-            _coroutineScope = coroutineScope
+            this.coroutineScope = coroutineScope
         }
 
     /**
@@ -80,12 +84,12 @@ class PasswordlessClient(
      */
     fun setContext(context: Context): PasswordlessClient =
         apply {
-            if (::_context.isInitialized) {
+            if (::context.isInitialized) {
                 throw IllegalStateException("Context cannot be set more than once")
             }
-            _context = context
-            _signatureService = SignatureService(_context)
-            credentialManager = CredentialManager.create(_context)
+            this.context = context
+            signatureService = SignatureService(context)
+            credentialManager = CredentialManager.create(context)
         }
 
     private inline fun <reified T> Response<T>.throwIfNetworkRequestFailed(): Response<T> {
@@ -100,48 +104,53 @@ class PasswordlessClient(
      * Initiates the login process for Passwordless authentication.
      *
      * @param alias The user alias for authentication.
-     * @param onLoginResult Callback function to handle the login result.
-     *                     It provides a boolean indicating success, an optional exception in case of failure,
-     *                     and the response containing information about the completed login if successful.
+     * @param onLoginResult Callback function to handle the login result. It provides a boolean
+     * indicating success, an optional exception in case of failure, and the response containing
+     * information about the completed login if successful.
      */
     fun login(
         alias: String,
-        onLoginResult: (Boolean, Exception?, LoginCompleteResponse?) -> Unit
-    ) = _coroutineScope.launch(Dispatchers.IO) {
+        onLoginResult: (Boolean, Exception?, LoginCompleteResponse?) -> Unit,
+    ) = coroutineScope.launch(Dispatchers.IO) {
         try {
             val beginInputModel = LoginBeginRequest(
                 alias = alias,
-                rpId = _options.rpId,
-                origin = _signatureService.getFacetId()
+                rpId = options.rpId,
+                origin = signatureService.getFacetId(),
             )
-            val beginResponse = _httpClient
+            val beginResponse = httpClient
                 .loginBegin(beginInputModel)
                 .throwIfNetworkRequestFailed()
 
             val beginResponseData: LoginBeginResponse = beginResponse.body()!!
 
             val credentialResponse = credentialManager.getCredential(
-                _context,
+                context,
                 GetCredentialRequest(
                     listOf(
-                        beginResponseData.data
-                    )
-                )
+                        beginResponseData.data,
+                    ),
+                ),
             )
 
             val completeInputModel = LoginCompleteRequest(
                 session = beginResponseData.session,
                 response = credentialResponse.credential as PublicKeyCredential,
-                origin = _signatureService.getFacetId(),
-                rpId = _options.rpId
+                origin = signatureService.getFacetId(),
+                rpId = options.rpId,
             )
 
-            val completeResponse = _httpClient
+            val completeResponse = httpClient
                 .loginComplete(completeInputModel)
                 .throwIfNetworkRequestFailed()
 
             onLoginResult(true, null, completeResponse.body()!!)
-        } catch (e: Exception) {
+        } catch (e: PasswordlessApiException) {
+            Log.e("bwp-login", "Unexpectedly failed logging in with FIDO2 credential.", e)
+            withContext(Dispatchers.Main) {
+                onLoginResult(false, e, null)
+            }
+        } catch (e: GetCredentialException) {
             Log.e("bwp-login", "Unexpectedly failed logging in with FIDO2 credential.", e)
             withContext(Dispatchers.Main) {
                 onLoginResult(false, e, null)
@@ -154,49 +163,54 @@ class PasswordlessClient(
      *
      * @param token The registration token obtained from the backend.
      * @param nickname The nickname for the credential.
-     * @param onRegisterResult Callback function to handle the registration result.
-     *                         It provides a boolean indicating success, an optional exception in case of failure,
-     *                         and the response containing information about the completed registration if successful.
+     * @param onRegisterResult Callback function to handle the registration result. It provides a
+     * boolean indicating success, an optional exception in case of failure, and the response
+     * containing information about the completed registration if successful.
      */
     fun register(
         token: String,
         nickname: String = "",
-        onRegisterResult: (Boolean, Exception?, RegisterCompleteResponse?) -> Unit
-    ) = _coroutineScope.launch(Dispatchers.IO) {
+        onRegisterResult: (Boolean, Exception?, RegisterCompleteResponse?) -> Unit,
+    ) = coroutineScope.launch(Dispatchers.IO) {
         try {
             val beginInputModel = RegisterBeginRequest(
                 token = token,
-                rpId = _options.rpId,
-                origin = _signatureService.getFacetId()
+                rpId = options.rpId,
+                origin = signatureService.getFacetId(),
             )
 
             val beginResponse =
-                _httpClient
+                httpClient
                     .registerBegin(beginInputModel)
                     .throwIfNetworkRequestFailed()
 
             val beginResult: RegisterBeginResponse = beginResponse.body()!!
 
             val response = credentialManager.createCredential(
-                _context,
-                beginResult.data
+                context,
+                beginResult.data,
             ) as CreatePublicKeyCredentialResponse
 
             val completeRequest = RegisterCompleteRequest(
                 session = beginResult.session,
                 response = response,
                 nickname = nickname,
-                origin = _signatureService.getFacetId(),
-                rpId = _options.rpId
+                origin = signatureService.getFacetId(),
+                rpId = options.rpId,
             )
 
             val completeResponse =
-                _httpClient.registerComplete(completeRequest).throwIfNetworkRequestFailed()
+                httpClient.registerComplete(completeRequest).throwIfNetworkRequestFailed()
 
             withContext(Dispatchers.Main) {
                 onRegisterResult(true, null, completeResponse.body())
             }
-        } catch (e: Exception) {
+        } catch (e: PasswordlessApiException) {
+            Log.e("bwp-register", "Unexpectedly failed creating FIDO2 credential.", e)
+            withContext(Dispatchers.Main) {
+                onRegisterResult(false, e, null)
+            }
+        } catch (e: CreateCredentialException) {
             Log.e("bwp-register", "Unexpectedly failed creating FIDO2 credential.", e)
             withContext(Dispatchers.Main) {
                 onRegisterResult(false, e, null)

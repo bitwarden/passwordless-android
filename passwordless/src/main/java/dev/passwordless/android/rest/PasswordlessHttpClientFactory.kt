@@ -10,7 +10,16 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+/**
+ * Factory for creating an instance of the [PasswordlessHttpClient].
+ */
 object PasswordlessHttpClientFactory {
+    /**
+     * Creates an instance of the [PasswordlessHttpClient].
+     *
+     * @param options The options for the client.
+     * @return The created client.
+     */
     fun create(options: PasswordlessOptions): PasswordlessHttpClient {
         val gson: Gson = JsonSerializerImpl.get()
 

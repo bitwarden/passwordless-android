@@ -6,11 +6,16 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import java.lang.reflect.Type
 
-class CreatePublicKeyCredentialRequestDeserializer : JsonDeserializer<CreatePublicKeyCredentialRequest> {
+/**
+ * Deserializer for create public key credential requests.
+ */
+class CreatePublicKeyCredentialRequestDeserializer :
+    JsonDeserializer<CreatePublicKeyCredentialRequest> {
+
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,
-        context: JsonDeserializationContext?
+        context: JsonDeserializationContext?,
     ): CreatePublicKeyCredentialRequest {
         return CreatePublicKeyCredentialRequest(json.toString())
     }
