@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    alias(libs.plugins.sonarqube)
 }
 
 android {
@@ -59,4 +60,20 @@ dependencies {
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "bitwarden_passwordless-android")
+        property("sonar.organization", "bitwarden")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sources", "app/src/main/,passwordless/src/main/")
+        property("sonar.tests", "app/src/test/,passwordless/src/test/")
+    }
+}
+
+tasks {
+    getByName("sonarqube") {
+        dependsOn("check")
+    }
 }
