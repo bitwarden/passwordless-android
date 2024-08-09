@@ -67,8 +67,8 @@ sonar {
         property("sonar.projectKey", "bitwarden_passwordless-android")
         property("sonar.organization", "bitwarden")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sources", "app/src/main/,passwordless/src/main/")
-        property("sonar.tests", "app/src/test/,passwordless/src/test/")
+        property("sonar.sources", "app/src/main/")
+        property("sonar.tests", "app/src/test/")
         property("sonar.test.inclusions", "app/src/test/")
         property("sonar.exclusions", "app/src/test/")
     }
