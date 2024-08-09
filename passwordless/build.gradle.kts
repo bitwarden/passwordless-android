@@ -169,6 +169,8 @@ sonar {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sources", "passwordless/src/main/")
         property("sonar.tests", "passwordless/src/test/")
+        property("sonar.test.inclusions", "passwordless/src/test/")
+        property("sonar.exclusions", "passwordless/src/test/")
     }
 }
 
