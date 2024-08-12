@@ -18,6 +18,7 @@ gson = "2.11.0"
 okhttp-logging-interceptor = "4.12.0"
 hilt = "2.51.1"
 detekt = "1.23.6"
+sonarqube = "5.0.0.4638"
 
 [libraries]
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
@@ -48,3 +49,4 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", v
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
