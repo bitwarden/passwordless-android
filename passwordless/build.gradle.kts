@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.maven.publish)
     alias(libs.plugins.signing)
+    alias(libs.plugins.sonarqube)
 }
 
 android {
@@ -159,4 +160,22 @@ signing {
         System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKeyPassword")
     )
     sign(publishing.publications)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "bitwarden_passwordless-android")
+        property("sonar.organization", "bitwarden")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sources", "passwordless/src/main/")
+        property("sonar.tests", "passwordless/src/test/")
+        property("sonar.test.inclusions", "passwordless/src/test/")
+        property("sonar.exclusions", "passwordless/src/test/")
+    }
+}
+
+tasks {
+    getByName("sonarqube") {
+        dependsOn("check")
+    }
 }
