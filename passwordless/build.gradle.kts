@@ -1,19 +1,19 @@
 plugins {
+    alias(libs.plugins.android.library)
     alias(libs.plugins.detekt)
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("maven-publish")
-    id("signing")
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.signing)
     alias(libs.plugins.sonarqube)
 }
 
 android {
     namespace = "dev.passwordless.android"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        version = "1.1.0"
-        minSdk = 28
+        version = libs.versions.passwordless.sdk
+        minSdk = libs.versions.minSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -55,7 +55,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.core.ktx)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.credentials)
     implementation(libs.credentials.play.services.auth)
     implementation(libs.gson)
