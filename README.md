@@ -21,20 +21,20 @@ Apache Maven
 <dependency>
   <groupId>com.bitwarden</groupId>
   <artifactId>passwordless-android</artifactId>
-  <version>1.1.0</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
 Gradle Kotlin DSL
 
 ```kotlin
-implementation("com.bitwarden:passwordless-android:1.1.0")
+implementation("com.bitwarden:passwordless-android:2.0.0")
 ```
 
 Gradle Groovy DSL
 
 ```groovy
-implementation 'com.bitwarden:passwordless-android:1.1.0'
+implementation 'com.bitwarden:passwordless-android:2.0.0'
 ```
 
 ### Permissions
