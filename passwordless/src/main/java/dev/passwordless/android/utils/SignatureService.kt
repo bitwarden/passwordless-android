@@ -31,7 +31,7 @@ class SignatureService {
             packageName,
             PackageManager.GET_SIGNING_CERTIFICATES,)
 
-        val signatures: Array<Signature> = packageInfo.signingInfo.apkContentsSigners
+        val signatures: Array<Signature> = packageInfo.signingInfo!!.apkContentsSigners
 
         val signature: ByteArray = signatures[0].toByteArray()
         val md: MessageDigest = MessageDigest.getInstance("SHA-256")
