@@ -45,6 +45,9 @@ data class PasswordlessOptions(
         return true
     }
 
+    /**
+     * Constants for the Passwordless API key format.
+     */
     companion object {
         const val API_KEY_SEGMENTS = 3
         const val UUID_LENGTH = 32
