@@ -147,8 +147,8 @@ publishing {
             url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
 
             credentials {
-                username = System.getenv("ORG_GRADLE_PROJECT_mavenCentralUsername") ?: throw Exception("'ORG_GRADLE_PROJECT_mavenCentralUsername' is missing.")
-                password = System.getenv("ORG_GRADLE_PROJECT_mavenCentralPassword") ?: throw Exception("'ORG_GRADLE_PROJECT_mavenCentralPassword' is missing.")
+                username = System.getenv("_ORG_GRADLE_PROJECT_mavenCentralUsername") ?: throw Exception("'_ORG_GRADLE_PROJECT_mavenCentralUsername' is missing.")
+                password = System.getenv("_ORG_GRADLE_PROJECT_mavenCentralPassword") ?: throw Exception("'_ORG_GRADLE_PROJECT_mavenCentralPassword' is missing.")
             }
         }
     }
@@ -156,8 +156,8 @@ publishing {
 
 signing {
     useInMemoryPgpKeys(
-        System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey"),
-        System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKeyPassword")
+        System.getenv("_ORG_GRADLE_PROJECT_signingInMemoryKey"),
+        System.getenv("_ORG_GRADLE_PROJECT_signingInMemoryKeyPassword")
     )
     sign(publishing.publications)
 }
