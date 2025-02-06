@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    name: Build
     env:
       _ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
       _ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_TOKEN }}
