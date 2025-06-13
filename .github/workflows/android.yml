@@ -44,7 +44,7 @@ jobs:
       uses: bitwarden/gh-actions/get-keyvault-secrets@main
       with:
         keyvault: "gh-passwordless-android"
-        secrets: "OSSRH_USERNAME,OSSRH_TOKEN,GPG_KEY,GPG_PASSPHRASE"
+        secrets: "OSSRH-USERNAME,OSSRH-TOKEN,GPG-KEY,GPG-PASSPHRASE"
 
     - name: Azure Logout
       uses: bitwarden/gh-actions/azure-logout@main
@@ -54,8 +54,8 @@ jobs:
 
     - name: Build with Gradle
       env:
-        _ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ steps.get-kv-secrets.outputs.OSSRH_USERNAME }}
-        _ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ steps.get-kv-secrets.outputs.OSSRH_TOKEN }}
-        _ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ steps.get-kv-secrets.outputs.GPG_KEY }}
-        _ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ steps.get-kv-secrets.outputs.GPG_PASSPHRASE }}
+        _ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ steps.get-kv-secrets.outputs.OSSRH-USERNAME }}
+        _ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ steps.get-kv-secrets.outputs.OSSRH-TOKEN }}
+        _ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ steps.get-kv-secrets.outputs.GPG-KEY }}
+        _ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ steps.get-kv-secrets.outputs.GPG-PASSPHRASE }}
       run: ./gradlew build
