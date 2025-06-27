@@ -50,6 +50,11 @@ jobs:
       uses: bitwarden/gh-actions/azure-logout@main
 
     - name: Lint
+      env:
+        _ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ steps.get-kv-secrets.outputs.OSSRH-USERNAME }}
+        _ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ steps.get-kv-secrets.outputs.OSSRH-TOKEN }}
+        _ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ steps.get-kv-secrets.outputs.GPG-KEY }}
+        _ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ steps.get-kv-secrets.outputs.GPG-PASSPHRASE }}
       run: ./gradlew check
 
     - name: Build with Gradle
