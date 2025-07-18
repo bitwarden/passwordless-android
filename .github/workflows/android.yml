@@ -9,13 +9,10 @@ on:
 jobs:
   build:
     name: Build
-    env:
-      _ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
-      _ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_TOKEN }}
-      _ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY }}
-      _ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
-
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
     - name: Check out repo
@@ -34,8 +31,35 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Log in to Azure
+      uses: bitwarden/gh-actions/azure-login@main
+      with:
+        subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+        client_id: ${{ secrets.AZURE_CLIENT_ID }}
+
+    - name: Get Azure Key Vault secrets
+      id: get-kv-secrets
+      uses: bitwarden/gh-actions/get-keyvault-secrets@main
+      with:
+        keyvault: "gh-passwordless-android"
+        secrets: "OSSRH-USERNAME,OSSRH-TOKEN,GPG-KEY,GPG-PASSPHRASE"
+
+    - name: Log out from Azure
+      uses: bitwarden/gh-actions/azure-logout@main
+
     - name: Lint
+      env:
+        _ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ steps.get-kv-secrets.outputs.OSSRH-USERNAME }}
+        _ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ steps.get-kv-secrets.outputs.OSSRH-TOKEN }}
+        _ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ steps.get-kv-secrets.outputs.GPG-KEY }}
+        _ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ steps.get-kv-secrets.outputs.GPG-PASSPHRASE }}
       run: ./gradlew check
 
     - name: Build with Gradle
+      env:
+        _ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ steps.get-kv-secrets.outputs.OSSRH-USERNAME }}
+        _ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ steps.get-kv-secrets.outputs.OSSRH-TOKEN }}
+        _ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ steps.get-kv-secrets.outputs.GPG-KEY }}
+        _ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ steps.get-kv-secrets.outputs.GPG-PASSPHRASE }}
       run: ./gradlew build
